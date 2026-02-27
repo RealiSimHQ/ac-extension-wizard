@@ -387,11 +387,7 @@ function updateNav() {
 
 function goNext() {
   if (phase === 'checklist') {
-    // If rims_tires_final is checked, open the tool
-    if (checked.has('rims_tires_final')) {
-      window.open('https://realisimhq.github.io/Rim-and-Tire-Swap/', '_blank');
-    }
-    startFillIn();
+      startFillIn();
   } else if (phase === 'fillin') {
     if (fillIdx < fillOrder.length - 1) {
       fillIdx++;
@@ -825,13 +821,63 @@ function generateOutput() {
   L('[SCRIPT_...]'); L('SCRIPT = collision_sfx.lua'); L();
   L('[EXTRA_SWITCHES]'); L('SWITCH_E_FLAGS = HOLD_MODE'); L();
 
-  // Show
+  // Show modal first, then output
   const output = lines.join('\n');
   document.getElementById('output-code').textContent = output;
-  document.getElementById('wizard').style.display = 'none';
-  document.getElementById('wizard-nav').style.display = 'none';
-  document.getElementById('output-section').style.display = 'block';
+  showGenerateModal(output);
 }
+
+function showGenerateModal() {
+  const wantsRims = checked.has('rims_tires_final');
+
+  const modal = document.createElement('div');
+  modal.id = 'generate-modal';
+  modal.innerHTML = `
+    <div class="modal-backdrop" onclick="closeModal()"></div>
+    <div class="modal-card">
+      <img src="realisimhq-logo.png" alt="RealiSimHQ" class="modal-logo">
+      <div class="modal-ring" id="modal-ring">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="modal-bolt">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10"></polygon>
+        </svg>
+      </div>
+      <h3 class="modal-title" id="modal-title">Generating...</h3>
+      <p class="modal-sub" id="modal-sub">Building your RealiSimHQ.ini</p>
+      <div class="modal-divider"></div>
+      <p class="modal-cta">Enjoying the tools? Support the project!</p>
+      <div class="modal-links">
+        <a href="https://www.patreon.com/c/u80119694" target="_blank" class="modal-btn patreon">❤️ Support on Patreon</a>
+        ${wantsRims ? `<a href="https://realisimhq.github.io/Rim-and-Tire-Swap/" target="_blank" class="modal-btn rims">🛞 Rim & Tire Swap Tool</a>` : ''}
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+
+  // Animate: preparing → done
+  setTimeout(() => {
+    document.getElementById('modal-ring').classList.add('done');
+    document.getElementById('modal-title').textContent = '✅ Ready!';
+    document.getElementById('modal-sub').textContent = 'Your config has been generated';
+  }, 1500);
+
+  // Auto-close after 5 seconds
+  setTimeout(() => {
+    closeModal();
+  }, 5000);
+}
+
+window.closeModal = function() {
+  const modal = document.getElementById('generate-modal');
+  if (modal) {
+    modal.classList.add('modal-fade-out');
+    setTimeout(() => {
+      modal.remove();
+      document.getElementById('wizard').style.display = 'none';
+      document.getElementById('wizard-nav').style.display = 'none';
+      document.getElementById('output-section').style.display = 'block';
+    }, 300);
+  }
+};
 
 function copyOutput() {
   const text = document.getElementById('output-code').textContent;
