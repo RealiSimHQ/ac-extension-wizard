@@ -887,31 +887,38 @@ function generateOutput() {
     const carW = parseFloat(ug.ug_width) || 1.4;
     const carL = parseFloat(ug.ug_length) || 3.8;
     const carY = parseFloat(ug.ug_height) || 0.20;
-    const halfW = (carW / 2).toFixed(1);        // inner edge for front/rear strips
-    const sideX = (carW / 2 + 0.1).toFixed(1);  // outer edge for side strips
-    const frontZ = (-(carL / 2) + 0.1).toFixed(1); // front strip Z
-    const rearZ = (carL / 2).toFixed(1);            // rear strip Z
-    const sideZf = (carL / 2 - 1.0).toFixed(1);    // side strips run from +Z...
-    const sideZr = (-(carL / 2) + 1.0).toFixed(1); // ...to -Z (inset a bit from bumpers)
+    const frontZ = (-(carL / 2)).toFixed(2);
+    const rearZ = (carL / 2).toFixed(2);
     const y = carY.toFixed(2);
 
     L(SEP); L('; Underglow Lights'); L(SEP);
     L(`; Calculated from car dimensions: ${carW}m wide × ${carL}m long, height ${y}`);
+    // 4 strips all running front-to-back (direction of travel)
+    // Spread evenly across the car width
+    const spacing = carW / 3;  // divide into 3 gaps for 4 strips
+    const x1 = (-(carW / 2) + spacing * 0).toFixed(2);  // far left
+    const x2 = (-(carW / 2) + spacing * 1).toFixed(2);  // center-left
+    const x3 = (-(carW / 2) + spacing * 2).toFixed(2);  // center-right
+    const x4 = (-(carW / 2) + spacing * 3).toFixed(2);  // far right
+    const zFront = frontZ;
+    const zRear = rearZ;
+
     const strips = [
-      {n:'1',f:`-${halfW}, ${y}, ${frontZ}`,t:`${halfW}, ${y}, ${frontZ}`,c:'0.7', side:'front'},
-      {n:'2',f:`${sideX}, ${y}, ${sideZf}`,t:`${sideX}, ${y}, ${sideZr}`,c:'0.8', side:'right'},
-      {n:'3',f:`-${sideX}, ${y}, ${sideZf}`,t:`-${sideX}, ${y}, ${sideZr}`,c:'0.8', side:'left'},
-      {n:'4',f:`-${halfW}, ${y}, ${rearZ}`,t:`${halfW}, ${y}, ${rearZ}`,c:'0.8', side:'rear'},
+      {n:'1', x: x1, idx: 0},
+      {n:'2', x: x2, idx: 1},
+      {n:'3', x: x3, idx: 2},
+      {n:'4', x: x4, idx: 3},
     ];
     strips.forEach(s => {
-      // If user provided a 2nd from color, alternate sides
-      const useFrom2 = colorFrom2 && (s.side === 'right' || s.side === 'rear');
+      // Alternate colors: even index = color A, odd index = color B
+      const useFrom2 = colorFrom2 && (s.idx % 2 === 1);
       const cFrom = useFrom2 ? colorFrom2 : colorFrom;
       L(`[LIGHT_EXTRA_${s.n}]`);
-      L(`LINE_FROM=${s.f}`); L(`LINE_TO=${s.t}`);
+      L(`LINE_FROM=${s.x}, ${y}, ${zFront}`);
+      L(`LINE_TO=${s.x}, ${y}, ${zRear}`);
       L('BIND_TO_HEADLIGHTS=1');
       L(`COLOR_FROM=${cFrom}`); L(`COLOR_TO=${colorTo}`);
-      L(`DIFFUSE_CONCENTRATION=${s.c}`);
+      L('DIFFUSE_CONCENTRATION=0.8');
       L('FADE_AT=150'); L('FADE_SMOOTH=8');
       L(`RANGE=${ug.ug_range}`); L('RANGE_GRADIENT_OFFSET=0.1');
       L(`SPOT=${ug.ug_spot}`); L('SPOT_SHARPNESS=0.5');
