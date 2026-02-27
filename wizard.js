@@ -215,9 +215,9 @@ const FEATURES = [
         { value: 'gold', label: 'Gold' },
         { value: 'white', label: 'White' },
       ], default: 'custom' },
-      { id: 'ug_color_from', label: 'Color From 1 (R, G, B)', default: '0, 70, 20', hint: 'Used when Preset is Custom' },
-      { id: 'ug_color_from2', label: 'Color From 2 (R, G, B)', default: '', hint: 'Optional second color — leave blank to use one color' },
-      { id: 'ug_color_to', label: 'Color To (R, G, B)', default: '70, 0, 50', hint: 'Used when Preset is Custom' },
+      { id: 'ug_color_from', label: 'Color From 1 (R, G, B)', default: '0, 70, 20', hint: 'Used when Preset is Custom', colorPicker: true },
+      { id: 'ug_color_from2', label: 'Color From 2 (R, G, B)', default: '', hint: 'Optional second color — leave blank to use one color', colorPicker: true },
+      { id: 'ug_color_to', label: 'Color To (R, G, B)', default: '70, 0, 50', hint: 'Used when Preset is Custom', colorPicker: true },
       { id: 'ug_range', label: 'Range', default: '2.0', type: 'number', step: '0.1' },
       { id: 'ug_spot', label: 'Spot', default: '170', type: 'number', step: '10' },
       { id: 'ug_blinking', label: 'Blinking', type: 'choice', choices: [
@@ -433,6 +433,9 @@ function renderFields(fields, featureId, repeatIdx) {
       if (f.paste) {
         html += `<button class="btn-paste" onclick="pasteInto('${featureId}','${fid}',${repeatIdx})">📋 Paste</button>`;
       }
+      if (f.colorPicker) {
+        html += `<button class="btn-color-pick" onclick="openColorPicker('${featureId}','${f.id}','${fid}',${repeatIdx})">🎨</button>`;
+      }
       html += `</div>`;
     }
     html += `</div>`;
@@ -463,6 +466,86 @@ window.pasteInto = async function(featId, fid, repeatIdx) {
   } catch (e) {
     alert('Clipboard access denied. Please paste manually (Ctrl+V).');
   }
+};
+
+window.openColorPicker = function(featId, realFid, inputFid, repeatIdx) {
+  // Remove existing picker
+  const old = document.getElementById('color-picker-popup');
+  if (old) old.remove();
+
+  // Parse current value
+  const input = document.getElementById(`input-${featId}-${inputFid}`);
+  const curVal = input ? input.value : '0, 0, 0';
+  const rgb = parseRGB(curVal);
+
+  // Convert RGB to hex for the color input (at full brightness)
+  const max = Math.max(rgb[0], rgb[1], rgb[2], 1);
+  const intensity = Math.round((max / 255) * 100);
+  const normR = Math.round((rgb[0] / max) * 255);
+  const normG = Math.round((rgb[1] / max) * 255);
+  const normB = Math.round((rgb[2] / max) * 255);
+  const hex = '#' + [normR, normG, normB].map(c => c.toString(16).padStart(2, '0')).join('');
+
+  const popup = document.createElement('div');
+  popup.id = 'color-picker-popup';
+  popup.innerHTML = `
+    <div class="cp-backdrop" onclick="closeColorPicker()"></div>
+    <div class="cp-card">
+      <div class="cp-header">Pick a Color</div>
+      <div class="cp-preview" id="cp-preview"></div>
+      <div class="cp-row">
+        <input type="color" id="cp-wheel" value="${hex}" class="cp-wheel">
+        <div class="cp-sliders">
+          <label>Intensity</label>
+          <input type="range" id="cp-intensity" min="1" max="100" value="${intensity}" class="cp-slider">
+          <span id="cp-intensity-val">${intensity}%</span>
+        </div>
+      </div>
+      <div class="cp-result" id="cp-result">${curVal}</div>
+      <div class="cp-actions">
+        <button class="btn-glow cyan cp-apply" onclick="applyColorPicker('${featId}','${realFid}','${inputFid}',${repeatIdx})">Apply</button>
+        <button class="btn-glow ghost cp-cancel" onclick="closeColorPicker()">Cancel</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(popup);
+
+  const wheel = document.getElementById('cp-wheel');
+  const slider = document.getElementById('cp-intensity');
+  const update = () => {
+    const h = wheel.value;
+    const pct = parseInt(slider.value) / 100;
+    const hr = parseInt(h.slice(1,3), 16);
+    const hg = parseInt(h.slice(3,5), 16);
+    const hb = parseInt(h.slice(5,7), 16);
+    const fr = Math.round(hr * pct);
+    const fg = Math.round(hg * pct);
+    const fb = Math.round(hb * pct);
+    document.getElementById('cp-preview').style.background = `rgb(${fr}, ${fg}, ${fb})`;
+    document.getElementById('cp-preview').style.boxShadow = `0 0 30px rgba(${fr}, ${fg}, ${fb}, 0.7)`;
+    document.getElementById('cp-result').textContent = `${fr}, ${fg}, ${fb}`;
+    document.getElementById('cp-intensity-val').textContent = slider.value + '%';
+  };
+  wheel.addEventListener('input', update);
+  slider.addEventListener('input', update);
+  update();
+};
+
+window.applyColorPicker = function(featId, realFid, inputFid, repeatIdx) {
+  const result = document.getElementById('cp-result').textContent;
+  const input = document.getElementById(`input-${featId}-${inputFid}`);
+  if (input) {
+    input.value = result;
+    updateVal(featId, realFid, result, repeatIdx);
+    input.style.borderColor = 'var(--success)';
+    setTimeout(() => input.style.borderColor = '', 800);
+  }
+  closeColorPicker();
+};
+
+window.closeColorPicker = function() {
+  const el = document.getElementById('color-picker-popup');
+  if (el) el.remove();
 };
 
 window.addRepeat = function(featId) {
