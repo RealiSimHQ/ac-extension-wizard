@@ -156,13 +156,67 @@ const FEATURES = [
     ]
   },
   {
+    id: 'smoke_color',
+    label: 'Tire Smoke Color',
+    desc: 'Custom colored tire smoke',
+    icon: '🌫️',
+    fields: [
+      { id: 'smoke_preset', label: 'Preset', type: 'choice', choices: [
+        { value: 'white', label: 'White' },
+        { value: 'blue', label: 'Blue' },
+        { value: 'pink', label: 'Pink' },
+        { value: 'red', label: 'Red' },
+        { value: 'yellow', label: 'Yellow' },
+        { value: 'purple', label: 'Purple' },
+        { value: 'custom', label: 'Custom RGB' },
+      ], default: 'white' },
+      { id: 'smoke_custom_rgb', label: 'Custom RGB (R, G, B)', default: '43, 100, 130', hint: 'Only used if Preset is Custom RGB' },
+    ]
+  },
+  {
+    id: 'metallic_reflect',
+    label: 'Metallic Paint Reflection',
+    desc: 'Colored reflections on carpaint',
+    icon: '🪩',
+    fields: [
+      { id: 'metallic_material', label: 'Carpaint Material', hint: 'Same material used for carpaint', paste: true },
+    ]
+  },
+  {
+    id: 'semitrans_shadows',
+    label: 'Semi-Transparent Shadows',
+    desc: 'Glass shadows let light through',
+    icon: '🔅',
+    fields: [
+      { id: 'semitrans_mats', label: 'Glass Material(s)', hint: 'Window/glass material names', paste: true },
+    ]
+  },
+  {
+    id: 'doubleface_shadows',
+    label: 'Double-Face Shadows',
+    desc: 'Eliminates shadow holes on body',
+    icon: '🕶️',
+    fields: [
+      { id: 'doubleface_mats', label: 'Body Material(s)', hint: 'Body/panel material names', paste: true },
+    ]
+  },
+  {
     id: 'underglow_lights',
     label: 'Underglow Lights',
     desc: 'LED strips under the car',
     icon: '💡',
     fields: [
-      { id: 'ug_color_from', label: 'Color From (R, G, B)', default: '0, 70, 20' },
-      { id: 'ug_color_to', label: 'Color To (R, G, B)', default: '70, 0, 50' },
+      { id: 'ug_preset', label: 'Color Preset', type: 'choice', choices: [
+        { value: 'custom', label: 'Custom' },
+        { value: 'cyan', label: 'Cyan' },
+        { value: 'purple', label: 'Purple' },
+        { value: 'red', label: 'Red' },
+        { value: 'green', label: 'Green' },
+        { value: 'gold', label: 'Gold' },
+        { value: 'white', label: 'White' },
+      ], default: 'custom' },
+      { id: 'ug_color_from', label: 'Color From (R, G, B)', default: '0, 70, 20', hint: 'Used when Preset is Custom' },
+      { id: 'ug_color_to', label: 'Color To (R, G, B)', default: '70, 0, 50', hint: 'Used when Preset is Custom' },
       { id: 'ug_range', label: 'Range', default: '2.0', type: 'number', step: '0.1' },
       { id: 'ug_spot', label: 'Spot', default: '170', type: 'number', step: '10' },
       { id: 'ug_blinking', label: 'Blinking', type: 'choice', choices: [
@@ -611,9 +665,61 @@ function generateOutput() {
     L();
   }
 
+  if (has('smoke_color')) {
+    const presets = {
+      white: '255, 255, 255', blue: '30, 80, 200', pink: '200, 50, 120',
+      red: '200, 30, 30', yellow: '220, 180, 30', purple: '120, 30, 180',
+    };
+    const preset = v('smoke_color').smoke_preset || 'white';
+    const rgb = preset === 'custom' ? (v('smoke_color').smoke_custom_rgb || '43, 100, 130') : presets[preset];
+    L(SEP); L('; Tire Smoke Color'); L(SEP);
+    L('; Note: SMOKE_COLOR is set in [PARTICLES_FX] static section below');
+    // We'll stash it for the static PARTICLES_FX section
+    window.__smokeColor = rgb;
+    L();
+  }
+
+  if (has('metallic_reflect')) {
+    L(SEP); L('; Metallic Paint Reflection'); L(SEP);
+    L('[SHADER_REPLACEMENT_...]');
+    L(`MATERIALS = ${v('metallic_reflect').metallic_material}`);
+    L('PROP_... = extColoredReflection, 0.9');
+    L('PROP_... = extColoredReflectionNorm, 0.8');
+    L('PROP_... = extColoredBaseReflection, 0.3');
+    L();
+  }
+
+  if (has('semitrans_shadows')) {
+    L(SEP); L('; Semi-Transparent Shadows'); L(SEP);
+    L('[SHADER_REPLACEMENT_...]');
+    L(`MATERIALS = ${v('semitrans_shadows').semitrans_mats}`);
+    L('SEMITRANSPARENT_SHADOWS = TEXTURE');
+    L();
+  }
+
+  if (has('doubleface_shadows')) {
+    L(SEP); L('; Double-Face Shadows'); L(SEP);
+    L('[SHADER_REPLACEMENT_...]');
+    L(`MATERIALS = ${v('doubleface_shadows').doubleface_mats}`);
+    L('DOUBLE_FACE_SHADOW_BIASED = 1');
+    L();
+  }
+
   if (has('underglow_lights')) {
     const ug = v('underglow_lights');
     const blink = ug.ug_blinking === '1';
+    const ugPresets = {
+      cyan: { from: '0, 200, 220', to: '0, 150, 200' },
+      purple: { from: '80, 0, 160', to: '160, 0, 200' },
+      red: { from: '200, 0, 0', to: '255, 30, 0' },
+      green: { from: '0, 200, 30', to: '0, 150, 80' },
+      gold: { from: '200, 160, 20', to: '220, 180, 40' },
+      white: { from: '200, 200, 220', to: '220, 220, 240' },
+    };
+    const ugPreset = ug.ug_preset || 'custom';
+    const colorFrom = ugPreset === 'custom' ? ug.ug_color_from : ugPresets[ugPreset].from;
+    const colorTo = ugPreset === 'custom' ? ug.ug_color_to : ugPresets[ugPreset].to;
+
     L(SEP); L('; Underglow Lights'); L(SEP);
     [{n:'1',f:'-0.7, 0.20, -1.8',t:'0.7, 0.20, -1.8',c:'0.7'},
      {n:'2',f:'0.8, 0.20, 0.8',t:'0.8, 0.20, -0.8',c:'0.8'},
@@ -622,7 +728,7 @@ function generateOutput() {
       L(`[LIGHT_EXTRA_${s.n}]`);
       L(`LINE_FROM=${s.f}`); L(`LINE_TO=${s.t}`);
       L('BIND_TO_HEADLIGHTS=1');
-      L(`COLOR_FROM=${ug.ug_color_from}`); L(`COLOR_TO=${ug.ug_color_to}`);
+      L(`COLOR_FROM=${colorFrom}`); L(`COLOR_TO=${colorTo}`);
       L(`DIFFUSE_CONCENTRATION=${s.c}`);
       L('FADE_AT=150'); L('FADE_SMOOTH=8');
       L(`RANGE=${ug.ug_range}`); L('RANGE_GRADIENT_OFFSET=0.1');
@@ -773,7 +879,8 @@ function generateOutput() {
   L('SPARKS_OVERLOAD_LAG=0.7');
   L("TRACES_LIGHTS_POS='0.658934, 0.739916, -2.08433'"); L('TRACES_LIGHTS_SIZE=-1');
   L('SMOKE_BLOCK_START = 0.4'); L('SMOKE_BLOCK_END = 0.6');
-  L('SMOKE_COLOR = 43, 100, 130'); L('SMOKE_FORCE_THICKNESS = 0.0'); L();
+  const smokeRGB = window.__smokeColor || '43, 100, 130';
+  L(`SMOKE_COLOR = ${smokeRGB}`); L('SMOKE_FORCE_THICKNESS = 0.0'); L();
 
   // TyresFX Flex
   L(SEP); L('; TyresFX Flex'); L(SEP);
