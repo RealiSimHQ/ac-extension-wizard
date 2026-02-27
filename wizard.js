@@ -165,7 +165,7 @@ const STEPS = [
       },
     ]
   },
-  // ─── 9. Rim/Paint Textures ───
+  // ─── 9. Rim & Paint Textures ───
   {
     id: 'rim_textures',
     title: 'Rim & Paint Textures',
@@ -201,118 +201,7 @@ const STEPS = [
       },
     ]
   },
-  // ─── 10. Tyre Shader ───
-  {
-    id: 'tyre_shader',
-    title: 'Tyre Shader',
-    desc: 'Tyre material properties and rubber look.',
-    sections: [
-      {
-        id: 'tyre_shader_mat',
-        question: 'Do you want Tyre Shader replacement?',
-        fields: [
-          { id: 'tyre_shader_materials', label: 'Tyre Material(s)', default: '21 - Default, Tyre.001, TIRE, Tyre_Stock, Tyre_Pro, Tyre_Thicc, Tyre, Tyres, TYRE, TIRE, TYRES', paste: true },
-        ]
-      },
-    ]
-  },
-  // ─── 11. TyresFX Custom Textures ───
-  {
-    id: 'tyresfx_tex',
-    title: 'TyresFX Custom Textures',
-    desc: 'Custom tire textures per compound (ksTyresFX shader).',
-    sections: [
-      {
-        id: 'tyresfx_custom',
-        question: 'Do you want TyresFX Custom Textures?',
-        fields: [
-          { id: 'tyresfx_mat', label: 'Tyre Material(s) for ksTyresFX', default: '21 - Default, Tyre.001, Tyre_Stock, Tyre_Pro, Tyre_Thicc', paste: true },
-          { id: 'tyresfx_0_path', label: 'Compound 0 Texture Path', default: '/../../parts/tyre/Federal_595RS_white_letter/', hint: 'Folder containing tyre1.dds and tyre1_NM.dds' },
-          { id: 'tyresfx_1_path', label: 'Compound 1 Texture Path', default: '/../../parts/tyre/Federal_595RS_white_letter/' },
-          { id: 'tyresfx_2_path', label: 'Compound 2 Texture Path', default: '/../../parts/tyre/Federal_595RS_white_letter/' },
-          { id: 'tyresfx_3_path', label: 'Compound 3 Texture Path', default: '/../../parts/tyre/KendaKR20A/' },
-          { id: 'tyresfx_4_path', label: 'Compound 4 Texture Path', default: '/../../parts/tyre/KendaKR20A/' },
-          { id: 'tyresfx_5_path', label: 'Compound 5 Texture Path', default: '/../../parts/tyre/KendaKR20A/' },
-          { id: 'tyresfx_6_path', label: 'Compound 6 Texture Path', default: '/../../parts/tyre/Armstrong_BluTracHP/' },
-          { id: 'tyresfx_7_path', label: 'Compound 7 Texture Path', default: '/../../parts/tyre/accelera_651/' },
-        ]
-      },
-    ]
-  },
-  // ─── 12. Driver ───
-  {
-    id: 'driver',
-    title: 'Driver Model & Textures',
-    desc: 'Custom driver suit, gloves, helmet, and 3D model.',
-    sections: [
-      {
-        id: 'driver_suit',
-        question: 'Do you want custom Driver Suit?',
-        fields: [
-          { id: 'suit_diff', label: 'Suit Diffuse Path', default: '/../../parts/Driver/2016_Suit_DIFF.dds' },
-          { id: 'suit_nm', label: 'Suit Normal Map Path', default: '/../../parts/Driver/2016_Suit_NM.dds' },
-        ]
-      },
-      {
-        id: 'driver_gloves',
-        question: 'Do you want custom Driver Gloves?',
-        fields: [
-          { id: 'gloves_diff', label: 'Gloves Diffuse Path', default: '/../../parts/Driver/2016_Gloves_DIFF.dds' },
-          { id: 'gloves_nm', label: 'Gloves Normal Map Path', default: '/../../parts/Driver/2016_Gloves_nm.dds' },
-        ]
-      },
-      {
-        id: 'driver_helmet',
-        question: 'Do you want custom Driver Helmet?',
-        fields: [
-          { id: 'helmet_diff', label: 'Helmet Diffuse Path', default: '/../../parts/Driver/HELMET_2012.dds' },
-          { id: 'helmet_glass_diff', label: 'Helmet Glass Diffuse', default: '/../../parts/Driver/Helmet_2012_Glass.dds' },
-          { id: 'helmet_map', label: 'Helmet Maps', default: '/../../parts/Driver/HELMET_2012_map.dds' },
-        ]
-      },
-      {
-        id: 'driver_3d',
-        question: 'Do you want a custom Driver 3D Model?',
-        fields: [
-          { id: 'driver_kn5', label: 'Driver KN5 Path', default: '/../../parts/Driver/Bare_Hands.kn5' },
-          { id: 'driver_pos', label: 'Position (x, y, z)', default: '0.0, 0.0, 0.0' },
-        ]
-      },
-    ]
-  },
-  // ─── 13. Steering Wheel ───
-  {
-    id: 'steering',
-    title: 'Steering Wheel',
-    desc: 'Custom steering wheel model and textures.',
-    sections: [
-      {
-        id: 'steer_model',
-        question: 'Do you want a custom Steering Wheel model?',
-        fields: [
-          { id: 'steer_kn5', label: 'Steering Wheel KN5', default: '/../../parts/Steering Wheels/vertex_wheel.kn5' },
-          { id: 'steer_insert_after', label: 'Insert After (mesh)', default: 'COCKPIT_HR' },
-          { id: 'steer_hide', label: 'Hide Original Mesh(es)', hint: 'Comma-separated mesh names to hide', paste: true },
-          { id: 'steer_scale', label: 'Scale (x, y, z)', default: '1.0, 1.0, 1.0' },
-          { id: 'steer_rotation', label: 'Rotation (x, y, z)', default: '0.0, 0.0, 0.0' },
-          { id: 'steer_offset', label: 'Offset (x, y, z)', default: '0, 0, 0' },
-        ]
-      },
-      {
-        id: 'steer_texture',
-        question: 'Do you want custom Steering Wheel textures?',
-        fields: [
-          { id: 'steer_tex_mesh', label: 'Steering Wheel Mesh', hint: 'Mesh name in the car kn5', paste: true },
-          { id: 'steer_tex_mat', label: 'Material Name', default: '01 - Default.001', paste: true },
-          { id: 'steer_tex_diff', label: 'Diffuse Path', default: '/../../parts/Steering Wheels/wheel.dds' },
-          { id: 'steer_tex_nm', label: 'Normal Map Path', default: '/../../parts/Steering Wheels/wheel_nm.dds' },
-          { id: 'steer_tex_maps', label: 'Maps Path', default: '/../../parts/Steering Wheels/wheel_Map.dds' },
-          { id: 'steer_tex_detail', label: 'Detail Path', default: '/../../parts/Steering Wheels/wheel.dds' },
-        ]
-      },
-    ]
-  },
-  // ─── 14. Custom Rims ───
+  // ─── 10. Custom Rims ───
   {
     id: 'rims',
     title: 'Custom Rims',
@@ -337,7 +226,7 @@ const STEPS = [
       },
     ]
   },
-  // ─── 15. Tire Replacement ───
+  // ─── 11. Tire Replacement ───
   {
     id: 'tires',
     title: 'Tire Replacement',
@@ -362,120 +251,7 @@ const STEPS = [
       },
     ]
   },
-  // ─── 16. Brake FX ───
-  {
-    id: 'brakes',
-    title: 'Brake FX',
-    desc: 'Brake caliper paint, hardware, and disc effects.',
-    sections: [
-      {
-        id: 'caliper_paint',
-        question: 'Do you want Brake Caliper Paint?',
-        fields: [
-          { id: 'caliper_paint_mat', label: 'Caliper Paint Material', default: 'EXT_CaliperHatPaint', paste: true },
-        ]
-      },
-      {
-        id: 'caliper_hardware',
-        question: 'Do you want Brake Caliper Hardware (metallic)?',
-        fields: [
-          { id: 'caliper_hw_mat', label: 'Caliper Hardware Material', default: 'EXT_CaliperHardware', paste: true },
-        ]
-      },
-      {
-        id: 'brake_disc',
-        question: 'Do you want Brake Disc FX?',
-        fields: [
-          { id: 'brake_ceramic', label: 'Ceramic Look', type: 'choice', choices: [
-            { value: '1', label: 'Yes' }, { value: '0', label: 'No' }
-          ], default: '1' },
-          { id: 'brake_carved', label: 'Carved Lines', type: 'choice', choices: [
-            { value: '1', label: 'Yes' }, { value: '0', label: 'No' }
-          ], default: '0' },
-          { id: 'brake_carved_freq', label: 'Carved Frequency', default: '20', type: 'number', step: '1' },
-          { id: 'brake_glow_offset', label: 'Glow Offset', default: '1.5', type: 'number', step: '0.1' },
-          { id: 'brake_int_radius', label: 'Disc Internal Radius', default: '0.1', type: 'number', step: '0.01' },
-          { id: 'brake_radius', label: 'Disc Radius', default: '0.16383', type: 'number', step: '0.001' },
-          { id: 'brake_wear', label: 'Wear Force', default: '0.45', type: 'number', step: '0.05' },
-        ]
-      },
-    ]
-  },
-  // ─── 17. Exhaust Flames ───
-  {
-    id: 'flames',
-    title: 'Exhaust Flames',
-    desc: 'Backfire flames — antilag, discharge, flat shift, limiter.',
-    sections: [
-      {
-        id: 'exhaust_flames',
-        question: 'Do you want Exhaust Flames?',
-        fields: [
-          { id: 'flame_antilag', label: 'Antilag', type: 'choice', choices: [
-            { value: '1', label: 'Yes' }, { value: '0', label: 'No' }
-          ], default: '1' },
-          { id: 'flame_antilag_delay', label: 'Antilag Delay (seconds)', default: '0.0', type: 'number', step: '0.1' },
-          { id: 'flame_antilag_intensity', label: 'Antilag Intensity', default: '1', type: 'number', step: '0.1' },
-          { id: 'flame_discharge', label: 'Discharge (throttle lift)', type: 'choice', choices: [
-            { value: '1', label: 'Yes' }, { value: '0', label: 'No' }
-          ], default: '1' },
-          { id: 'flame_discharge_charge', label: 'Discharge Charge Time', default: '0.1', type: 'number', step: '0.05' },
-          { id: 'flame_discharge_duration', label: 'Discharge Duration', default: '0.250', type: 'number', step: '0.05' },
-          { id: 'flame_discharge_prob', label: 'Discharge Probability', default: '0.25', type: 'number', step: '0.05', hint: '0-1 (0=never, 1=always)' },
-          { id: 'flame_discharge_intensity', label: 'Discharge Intensity', default: '0.5', type: 'number', step: '0.1' },
-          { id: 'flame_flatshift', label: 'Flat Shift', type: 'choice', choices: [
-            { value: '1', label: 'Yes' }, { value: '0', label: 'No' }
-          ], default: '1' },
-          { id: 'flame_flatshift_duration', label: 'Flat Shift Duration', default: '0.25', type: 'number', step: '0.05' },
-          { id: 'flame_flatshift_gas', label: 'Flat Shift Gas Threshold', default: '75', type: 'number', step: '5' },
-          { id: 'flame_flatshift_intensity', label: 'Flat Shift Intensity', default: '0.65', type: 'number', step: '0.05' },
-          { id: 'flame_limiter', label: 'Limiter', type: 'choice', choices: [
-            { value: '1', label: 'Yes' }, { value: '0', label: 'No' }
-          ], default: '1' },
-          { id: 'flame_limiter_intensity', label: 'Limiter Intensity', default: '0.15', type: 'number', step: '0.05' },
-        ]
-      },
-    ]
-  },
-  // ─── 18. Particles FX ───
-  {
-    id: 'particles',
-    title: 'Particles FX',
-    desc: 'Smoke, sparks, and tire particle effects.',
-    sections: [
-      {
-        id: 'particles_fx',
-        question: 'Do you want custom Particles FX?',
-        fields: [
-          { id: 'pfx_smoke_color', label: 'Smoke Color (R, G, B)', default: '43, 100, 130' },
-          { id: 'pfx_smoke_thickness', label: 'Smoke Force Thickness', default: '0.0', type: 'number', step: '0.1' },
-          { id: 'pfx_sparks_mult', label: 'Sparks Amount Multiplier', default: '2', type: 'number', step: '0.5' },
-          { id: 'pfx_body_sparks', label: 'Body Sparks Amount', default: '0.25', type: 'number', step: '0.05' },
-          { id: 'pfx_smoke_block_start', label: 'Smoke Block Start', default: '0.4', type: 'number', step: '0.1' },
-          { id: 'pfx_smoke_block_end', label: 'Smoke Block End', default: '0.6', type: 'number', step: '0.1' },
-        ]
-      },
-    ]
-  },
-  // ─── 19. TyresFX Flex ───
-  {
-    id: 'tyresfx_flex',
-    title: 'TyresFX Flex',
-    desc: 'Tire flex and deformation visuals (front/rear).',
-    sections: [
-      {
-        id: 'tyresfx_flex_cfg',
-        question: 'Do you want TyresFX Flex settings?',
-        fields: [
-          { id: 'tfx_front_profile', label: 'Front Flex Profile Mult', default: '0.45', type: 'number', step: '0.05' },
-          { id: 'tfx_front_skew_range', label: 'Front Skew Range Mult', default: '3', type: 'number', step: '0.5' },
-          { id: 'tfx_rear_profile', label: 'Rear Flex Profile Mult', default: '1.25', type: 'number', step: '0.05' },
-          { id: 'tfx_rear_skew_range', label: 'Rear Skew Range Mult', default: '3', type: 'number', step: '0.5' },
-        ]
-      },
-    ]
-  },
-  // ─── 20. Underglow ───
+  // ─── 12. Underglow ───
   {
     id: 'underglow',
     title: 'Underglow Lights',
@@ -496,7 +272,7 @@ const STEPS = [
       },
     ]
   },
-  // ─── 21. Emissive ───
+  // ─── 13. Emissive ───
   {
     id: 'emissive',
     title: 'Emissive Extras / Invisible Parts',
@@ -512,23 +288,6 @@ const STEPS = [
             { value: 'FRONT', label: 'Front' },
             { value: 'REAR', label: 'Rear' },
           ], default: 'FRONT' },
-        ]
-      },
-    ]
-  },
-  // ─── 22. Physics & FFB ───
-  {
-    id: 'physics',
-    title: 'Physics & FFB',
-    desc: 'Extended physics, FFB tweaks, soft lock — rarely changed defaults.',
-    sections: [
-      {
-        id: 'physics_ffb',
-        question: 'Do you want Physics & FFB config? (recommended defaults)',
-        fields: [
-          { id: 'stalled_rpm', label: 'Engine Stalled RPM Threshold', default: '750', type: 'number', step: '50' },
-          { id: 'softlock_padding', label: 'Soft Lock Padding', default: '10', type: 'number', step: '1' },
-          { id: 'bounding_sphere', label: 'Bounding Sphere Radius', default: '3', type: 'number', step: '0.5' },
         ]
       },
     ]
@@ -691,7 +450,9 @@ function generateOutput() {
   const lines = [];
   const L = (t = '') => lines.push(t);
   const SEP = ';===================================================================================================================';
+  const DSEP = ';--------------------------------------------------------------------------------------------------------------------';
 
+  // ── Header + Includes ──
   L('; Done By Pod\'s Mods of RealiSimHQ');
   L(';');
   L('; Add to Top of Ext_Config.ini');
@@ -709,7 +470,7 @@ function generateOutput() {
   L('[INCLUDE: common/rain_tyres.ini]');
   L();
 
-  // ── Audio ──
+  // ── Audio Pitch ──
   if (state.audio_pitch?.enabled) {
     L(SEP);
     L('; ~ Audio ~');
@@ -722,6 +483,7 @@ function generateOutput() {
     L();
   }
 
+  // ── Audio Volume ──
   if (state.audio_volume?.enabled) {
     if (!state.audio_pitch?.enabled) { L(SEP); L('; ~ Audio ~'); L(SEP); }
     L('[AUDIO_VOLUME]');
@@ -897,7 +659,7 @@ function generateOutput() {
     L();
   }
 
-  // ── Rim/Paint Textures ──
+  // ── Gold Rims ──
   if (state.gold_rims?.enabled) {
     L(SEP);
     L('; Gold Rims');
@@ -916,6 +678,7 @@ function generateOutput() {
     L();
   }
 
+  // ── Silver Rims ──
   if (state.silver_rims?.enabled) {
     L(SEP);
     L('; Silver Rims');
@@ -934,6 +697,7 @@ function generateOutput() {
     L();
   }
 
+  // ── Painted Texture ──
   if (state.painted_tex?.enabled) {
     L(SEP);
     L('; Painted Texture');
@@ -960,6 +724,7 @@ function generateOutput() {
     L();
   }
 
+  // ── Ext Chrome ──
   if (state.ext_chrome?.enabled) {
     L(SEP);
     L('; Exterior Chrome');
@@ -971,120 +736,6 @@ function generateOutput() {
     L('Metalness = 0.5');
     L('Reflectance = 0.5');
     L('LocalReflectionsSharpness = 0.1');
-    L();
-  }
-
-  // ── Tyre Shader ──
-  if (state.tyre_shader_mat?.enabled) {
-    L(SEP);
-    L('; Tyres');
-    L(SEP);
-    L('[SHADER_REPLACEMENT_...]');
-    L(`MATERIALS = ${state.tyre_shader_mat.values.tyre_shader_materials}`);
-    L('PROP_... = ksAmbient, 0.25');
-    L('PROP_... = ksDiffuse, 0.12');
-    L('PROP_... = ksSpecular, 0.002');
-    L('PROP_... = ksSpecularEXP, 350');
-    L('PROP_... = KsAlphaRef, 0');
-    L('PROP_... = blurLevel, 0');
-    L('PROP_... = dirtyLevel, 0.02');
-    L('PROP_... = fresnelC, 0.000');
-    L('PROP_... = fresnelEXP, 5');
-    L('PROP_... = fresnelMaxLevel, 0.000');
-    L('PROP_... = isAdditive, 0');
-    L('DOUBLE_FACE_SHADOW_BIASED = 1');
-    L();
-  }
-
-  // ── Driver ──
-  if (state.driver_suit?.enabled) {
-    L(SEP);
-    L('; Driver Suit');
-    L(SEP);
-    L('[SHADER_REPLACEMENT_...]');
-    L('MESHES = DRIVER:suit');
-    L('MATERIALS = RT_DriverSuit');
-    L('SHADER = ksSkinnedMesh_NMDetaill');
-    L('RESOURCE_0 = txDiffuse');
-    L(`RESOURCE_FILE_0 =${state.driver_suit.values.suit_diff}`);
-    L('RESOURCE_1 = txNormal');
-    L(`RESOURCE_FILE_1 =${state.driver_suit.values.suit_nm}`);
-    L();
-  }
-
-  if (state.driver_gloves?.enabled) {
-    L('[SHADER_REPLACEMENT_...]');
-    L('MESHES = DRIVER:Gloves');
-    L('MATERIALS = RT_Gloves');
-    L('SHADER = ksSkinnedMesh_NMDetaill');
-    L('RESOURCE_0 = txDiffuse');
-    L(`RESOURCE_FILE_0 =${state.driver_gloves.values.gloves_diff}`);
-    L('RESOURCE_1 = txNormal');
-    L(`RESOURCE_FILE_1 =${state.driver_gloves.values.gloves_nm}`);
-    L();
-  }
-
-  if (state.driver_helmet?.enabled) {
-    L('[SHADER_REPLACEMENT_...]');
-    L('MATERIALS = RT_HELMET_Glass');
-    L('SHADER = ksPerPixelMultiMap');
-    L('RESOURCE_0 = txDiffuse');
-    L(`RESOURCE_FILE_0 =${state.driver_helmet.values.helmet_glass_diff}`);
-    L('RESOURCE_1 = txNormal');
-    L('RESOURCE_FILE_1 =/../../parts/Driver/flat_nm.dds');
-    L('RESOURCE_2 = txMaps');
-    L(`RESOURCE_FILE_2 =${state.driver_helmet.values.helmet_map}`);
-    L('RESOURCE_3 = txDetail');
-    L('RESOURCE_FILE_3 =null.dds');
-    L();
-    L('[SHADER_REPLACEMENT_...]');
-    L('MESHES = DRIVER:HELMET_SUB0');
-    L('MATERIALS = RT_Helemt');
-    L('SHADER = ksPerPixelMultiMap');
-    L('RESOURCE_0 = txDiffuse');
-    L(`RESOURCE_FILE_0 =${state.driver_helmet.values.helmet_diff}`);
-    L('RESOURCE_1 = txNormal');
-    L('RESOURCE_FILE_1 =/../../flat_nm.dds');
-    L();
-  }
-
-  if (state.driver_3d?.enabled) {
-    L('[DRIVER3D_MODEL]');
-    L(`NAME=${state.driver_3d.values.driver_kn5}`);
-    L(`POSITION=${state.driver_3d.values.driver_pos}`);
-    L();
-  }
-
-  // ── Steering Wheel ──
-  if (state.steer_model?.enabled) {
-    L(SEP);
-    L('; Steering Wheel');
-    L(SEP);
-    L('[MODEL_REPLACEMENT_...]');
-    L('FILE = car.kn5');
-    L(`INSERT = ${state.steer_model.values.steer_kn5}`);
-    L(`INSERT_AFTER = ${state.steer_model.values.steer_insert_after}`);
-    L(`HIDE = ${state.steer_model.values.steer_hide || ''}`);
-    L(`SCALE = ${state.steer_model.values.steer_scale}`);
-    L(`ROTATION = ${state.steer_model.values.steer_rotation}`);
-    L(`OFFSET = ${state.steer_model.values.steer_offset}`);
-    L();
-  }
-
-  if (state.steer_texture?.enabled) {
-    const v = state.steer_texture.values;
-    L('[SHADER_REPLACEMENT_...]');
-    L(`MESHES = ${v.steer_tex_mesh}`);
-    L(`MATERIALS = ${v.steer_tex_mat}`);
-    L('SHADER = ksPerPixelMultiMap');
-    L('RESOURCE_0 = txDiffuse');
-    L(`RESOURCE_FILE_0 =${v.steer_tex_diff}`);
-    L('RESOURCE_1 = txNormal');
-    L(`RESOURCE_FILE_1 =${v.steer_tex_nm}`);
-    L('RESOURCE_2 = txMaps');
-    L(`RESOURCE_FILE_2 =${v.steer_tex_maps}`);
-    L('RESOURCE_3 = txDetail');
-    L(`RESOURCE_FILE_3 =${v.steer_tex_detail}`);
     L();
   }
 
@@ -1137,137 +788,45 @@ function generateOutput() {
     L();
   }
 
-  // ── TyresFX Custom Textures ──
-  if (state.tyresfx_custom?.enabled) {
-    const v = state.tyresfx_custom.values;
+  // ── Underglow ──
+  if (state.underglow_lights?.enabled) {
+    const v = state.underglow_lights.values;
+    const blinking = v.ug_blinking === '1';
     L(SEP);
-    L('; TyresFX Custom Textures');
+    L('; Underglow Lights');
     L(SEP);
-    L('[SHADER_REPLACEMENT_...]');
-    L(`MATERIALS = ${v.tyresfx_mat}`);
-    L('SHADER = ksTyresFX');
-    L();
-    for (let i = 0; i <= 7; i++) {
-      const path = v[`tyresfx_${i}_path`] || '';
-      L(`[TYRES_FX_CUSTOMTEXTURE_${i}]`);
-      // Determine file names based on path
-      const isAccelera = path.includes('accelera');
-      const isArmstrong = path.includes('Armstrong');
-      if (isAccelera) {
-        L(`TXDIFFUSE = ${path}tyre.dds`);
-        L(`TXBLUR = ${path}tyre_blur.dds`);
-        L(`TXDIRT = ${path}dirt.dds`);
-        L(`TXNORMAL = ${path}tyre_nm.dds`);
-        L(`TXNORMALBLUR = ${path}tyre_blur_nm.dds`);
-      } else if (isArmstrong) {
-        L(`TXDIFFUSE = ${path}tyre.dds`);
-        L(`TXBLUR = ${path}tyre.dds`);
-        L(`TXDIRT = ${path}tyre_dirt.dds`);
-        L(`TXNORMAL = ${path}tyre_nm.dds`);
-        L(`TXNORMALBLUR = ${path}tyre_nm.dds`);
-      } else if (path.includes('Federal') || path.includes('white_letter')) {
-        L(`TXDIFFUSE = ${path}tyre1.dds`);
-        L(`TXBLUR = ${path}tyre1.dds`);
-        L(`TXNORMAL = ${path}tyre1_NM.dds`);
-        L(`TXNORMALBLUR = ${path}tyre1_NM.dds`);
-      } else {
-        L(`TXDIFFUSE = ${path}tyre.dds`);
-        L(`TXBLUR = ${path}tyre.dds`);
-        L(`TXNORMAL = ${path}tyre_nm.dds`);
-        L(`TXNORMALBLUR = ${path}tyre_nm.dds`);
+    const ugSides = [
+      { name: '1', from: '-0.7, 0.20, -1.8', to: '0.7, 0.20, -1.8', conc: '0.7' },
+      { name: '2', from: '0.8, 0.20, 0.8', to: '0.8, 0.20, -0.8', conc: '0.8' },
+      { name: '3', from: '-0.8, 0.20, 0.8', to: '-0.8, 0.20, -0.8', conc: '0.8' },
+      { name: '4', from: '-0.7, 0.20, 2.0', to: '0.7, 0.20, 2.0', conc: '0.8' },
+    ];
+    ugSides.forEach(side => {
+      L(`[LIGHT_EXTRA_${side.name}]`);
+      L(`LINE_FROM=${side.from}`);
+      L(`LINE_TO=${side.to}`);
+      L('BIND_TO_HEADLIGHTS=1');
+      L(`COLOR_FROM=${v.ug_color_from}`);
+      L(`COLOR_TO=${v.ug_color_to}`);
+      L(`DIFFUSE_CONCENTRATION=${side.conc}`);
+      L('FADE_AT=150');
+      L('FADE_SMOOTH=8');
+      L(`RANGE=${v.ug_range}`);
+      L('RANGE_GRADIENT_OFFSET=0.1');
+      L(`SPOT=${v.ug_spot}`);
+      L('SPOT_SHARPNESS=0.5');
+      L('SPECULAR_MULT=0');
+      L('DIRECTION=0,-1,0');
+      L('SELF_LIGHTNING=1');
+      L('EXTERIOR_ONLY=0');
+      L('INTERIOR_ONLY=0');
+      L('SIMULATE_HEATING=0');
+      if (blinking) {
+        L('BLINKING_PATTERN=(0=1|1=0|2=1|3=0|4=1|5=0|6=1|7=0)');
+        L('BLINKING_DURATION=8');
       }
       L();
-    }
-  }
-
-  // ── Brake FX ──
-  if (state.caliper_paint?.enabled) {
-    L(SEP);
-    L('; Brake Caliper Paint');
-    L(SEP);
-    L('[Material_CarPaint_Metallic]');
-    L(`Materials = ${state.caliper_paint.values.caliper_paint_mat}`);
-    L('NormalsMode = BASIC');
-    L('ClearCoatThickness = 0.1');
-    L('SpecularColor = 1');
-    L('SpecularMult = 1.25');
-    L('FresnelMax = 0.5');
-    L('FresnelC = 0.14');
-    L('BrightnessAdjustment = 0.55');
-    L();
-  }
-
-  if (state.caliper_hardware?.enabled) {
-    L('[Material_Aluminium_v2]');
-    L(`Materials= ${state.caliper_hardware.values.caliper_hw_mat}`);
-    L('Metalness = 0.9');
-    L('Reflectance = 0');
-    L('Smoothness = 0');
-    L('BrightnessAdjustment = 0.38');
-    L('DetailTexture = 1');
-    L('DetailNormalTexture = common/pbr_metal.dds');
-    L('DetailNormalPBRSecondaryColor = 0, 0, 0, 0');
-    L('DetailScale = 0');
-    L('DetailNormalBlend = 1');
-    L('DetailNormalPBRSmoothnessGamma = 1');
-    L('OcclusionSource = MAPS_ALPHA');
-    L();
-  }
-
-  if (state.brake_disc?.enabled) {
-    const v = state.brake_disc.values;
-    L('[BRAKEDISC_FX]');
-    L('ACTIVE = 1');
-    L(`CERAMIC = ${v.brake_ceramic}`);
-    L(`CARVED = ${v.brake_carved}`);
-    L(`CARVED_FREQUENCY = ${v.brake_carved_freq}`);
-    L(`GLOW_OFFSET = ${v.brake_glow_offset}`);
-    L('DEBUG = 0');
-    L(`DISC_INTERNAL_RADIUS = ${v.brake_int_radius}`);
-    L(`DISC_RADIUS = ${v.brake_radius}`);
-    L(`WEAR_FORCE = ${v.brake_wear}`);
-    L('GLOW_FORCE = 0');
-    L();
-  }
-
-  // ── Exhaust Flames ──
-  if (state.exhaust_flames?.enabled) {
-    const v = state.exhaust_flames.values;
-    L(SEP);
-    L('; Exhaust Flames');
-    L(SEP);
-    L('[EXHAUST_FLAMES]');
-    L(`ANTILAG=${v.flame_antilag}`);
-    L(`ANTILAG_DELAY=${v.flame_antilag_delay}`);
-    L(`ANTILAG_INTENSITY=${v.flame_antilag_intensity}`);
-    L('ANTILAG_TURBO_THRESHOLD=0');
-    L('DAMAGE=1');
-    L('DAMAGE_DURATION=1.00');
-    L('DAMAGE_INTENSITY=1');
-    L('DAMAGE_PROBABILITY=1');
-    L(`DISCHARGE=${v.flame_discharge}`);
-    L(`DISCHARGE_CHARGE_TIME=${v.flame_discharge_charge}`);
-    L('DISCHARGE_DELAY=0');
-    L(`DISCHARGE_DURATION=${v.flame_discharge_duration}`);
-    L(`DISCHARGE_PROBABILITY=${v.flame_discharge_prob}`);
-    L(`DISCHARGE_INTENSITY=${v.flame_discharge_intensity}`);
-    L('DISCHARGE_WATER_TEMPERATURE_THRESHOLD=70');
-    L(`FLAT_SHIFT=${v.flame_flatshift}`);
-    L('FLAT_SHIFT_COOLDOWN=0');
-    L(`FLAT_SHIFT_DURATION=${v.flame_flatshift_duration}`);
-    L(`FLAT_SHIFT_GAS_THRESHOLD=${v.flame_flatshift_gas}`);
-    L(`FLAT_SHIFT_INTENSITY=${v.flame_flatshift_intensity}`);
-    L('FLAT_SHIFT_PROBABILITY=1');
-    L(`LIMITER=${v.flame_limiter}`);
-    L('LIMITER_DELAY=0');
-    L(`LIMITER_INTENSITY=${v.flame_limiter_intensity}`);
-    L();
-    L('[LIGHT_FLAMES]');
-    L('CAR_BRIGHTNESS_MULT=0,9');
-    L('OFFSET_DIR=0,15');
-    L('OFFSET_POS=0,25');
-    L('SPOT=300');
-    L();
+    });
   }
 
   // ── Emissive ──
@@ -1289,334 +848,428 @@ function generateOutput() {
     L();
   }
 
-  // ── Particles FX ──
-  if (state.particles_fx?.enabled) {
-    const v = state.particles_fx.values;
-    L(SEP);
-    L('; Particles FX');
-    L(SEP);
-    L('[PARTICLES_FX]');
-    L('BRAKES_SMOKE=1');
-    L('ENGINE_SMOKE=1');
-    L('EXHAUST_SMOKE=1');
-    L('DRAG_MULT=2');
-    L('LIFT_MULT=0.1');
-    L('BODY_SMOKE_AMOUNT=0');
-    L("BODY_SMOKE_COLOR='0, 0, 0, 0'");
-    L('BODY_SMOKE_COLOR_CONSISTENCY=0');
-    L('BODY_SMOKE_GROW_MULTIPLIER=1');
-    L('BODY_SMOKE_INTENSITY=1');
-    L('BODY_SMOKE_LIFETIME=1');
-    L('BODY_SMOKE_SIZE_MULTIPLIER=1');
-    L('BODY_SMOKE_SPREAD_MULTIPLIER=1');
-    L('BODY_SMOKE_TARGET_Y_VELOCITY=-0.3');
-    L('BODY_SMOKE_THICKNESS=0');
-    L(`BODY_SPARKS_AMOUNT=${v.pfx_body_sparks}`);
-    L("BODY_SPARKS_COLOR='1, 0.5, 0, 10'");
-    L('BODY_SPARKS_INTENSITY=0.2');
-    L('BODY_SPARKS_LIFETIME=0.4');
-    L('COLLIDER_0_SMOKE_AMOUNT=0');
-    L("COLLIDER_0_SMOKE_COLOR='0, 0, 0, 0'");
-    L('COLLIDER_0_SMOKE_COLOR_CONSISTENCY=0');
-    L('COLLIDER_0_SMOKE_GROW_MULTIPLIER=1');
-    L('COLLIDER_0_SMOKE_INTENSITY=1');
-    L('COLLIDER_0_SMOKE_LIFETIME=1');
-    L('COLLIDER_0_SMOKE_SIZE_MULTIPLIER=1');
-    L('COLLIDER_0_SMOKE_SPREAD_MULTIPLIER=1');
-    L('COLLIDER_0_SMOKE_TARGET_Y_VELOCITY=-0.3');
-    L('COLLIDER_0_SMOKE_THICKNESS=0');
-    L('COLLIDER_0_SPARKS_AMOUNT=0.25');
-    L("COLLIDER_0_SPARKS_COLOR='1, 0.5, 0, 10'");
-    L('COLLIDER_0_SPARKS_INTENSITY=0.2');
-    L('COLLIDER_0_SPARKS_LIFETIME=0.4');
-    L("SMOKE_BS_OFFSET_FRONT='0, 0, 0'");
-    L("SMOKE_BS_OFFSET_MIDDLE='0, 0, 0'");
-    L("SMOKE_BS_OFFSET_REAR='0, 0, 0'");
-    L('SMOKE_BS_RADIUS_FRONT=1.05');
-    L('SMOKE_BS_RADIUS_MIDDLE=1.05');
-    L('SMOKE_BS_RADIUS_REAR=1.05');
-    L("SMOKE_COLLIDER_OFFSET='0, 0'");
-    L('SMOKE_COLLIDER_RADIUS=2');
-    L('SMOKE_FLAMES_POWER_APPEARING=60');
-    L('SMOKE_FLAMES_POWER_MAIN=30');
-    L('SMOKE_FLAMES_RADIUS_APPEARING=10');
-    L('SMOKE_FLAMES_RADIUS_MAIN=1');
-    L('SMOKE_PUSHAWAY_STRENGTH=12');
-    L(`SPARKS_AMOUNT_MULT=${v.pfx_sparks_mult}`);
-    L('SPARKS_COOLDOWN_LAG=0.96');
-    L('SPARKS_DEPTH_EXP=4');
-    L('SPARKS_MAX_DEPTH=0.0025');
-    L('SPARKS_OVERLOAD_LAG=0.7');
-    L("TRACES_LIGHTS_POS='0.658934, 0.739916, -2.08433'");
-    L('TRACES_LIGHTS_SIZE=-1');
-    L(`SMOKE_BLOCK_START = ${v.pfx_smoke_block_start}`);
-    L(`SMOKE_BLOCK_END = ${v.pfx_smoke_block_end}`);
-    L(`SMOKE_COLOR = ${v.pfx_smoke_color}`);
-    L(`SMOKE_FORCE_THICKNESS = ${v.pfx_smoke_thickness}`);
-    L();
-  }
+  // ══════════════════════════════════════════════════════════════════════
+  // STATIC DEFAULTS — Always appended below
+  // ══════════════════════════════════════════════════════════════════════
+  L(SEP);
+  L(';---------------------------------------------Rarely Changed--------------------------------------------------------');
+  L(SEP);
+  L();
 
-  // ── TyresFX Flex ──
-  if (state.tyresfx_flex_cfg?.enabled) {
-    const v = state.tyresfx_flex_cfg.values;
-    L(SEP);
-    L('; TyresFX Flex');
-    L(SEP);
-    L('[TYRES_FX_FRONT]');
-    L('ENABLED=1');
-    L('FLEX_MAX_SKEW_MULT=1.1');
-    L('FLEX_MULT=1');
-    L(`FLEX_PROFILE_MULT=${v.tfx_front_profile}`);
-    L(`FLEX_SKEW_RANGE_MULT=${v.tfx_front_skew_range}`);
-    L('FLEX_SKEW_SMOOTHING=0.1');
-    L('FLEX_SQUASH_SMOOTHING=1.1');
-    L('NOFX_DISTANCE_SWITCH=40');
-    L('VISIBLE_IN_INTERIOR_CAM=1');
-    L();
-    L('[TYRES_FX_REAR]');
-    L('ENABLED=1');
-    L('FLEX_MAX_SKEW_MULT=1.1');
-    L('FLEX_MULT=1');
-    L(`FLEX_PROFILE_MULT=${v.tfx_rear_profile}`);
-    L(`FLEX_SKEW_RANGE_MULT=${v.tfx_rear_skew_range}`);
-    L('FLEX_SKEW_SMOOTHING=0.1');
-    L('FLEX_SQUASH_SMOOTHING=0.1');
-    L('NOFX_DISTANCE_SWITCH=40');
-    L('VISIBLE_IN_INTERIOR_CAM=1');
-    L();
-  }
+  // ── Tyre Shader (static) ──
+  L(SEP);
+  L('; Tyres');
+  L(SEP);
+  L('[SHADER_REPLACEMENT_...]');
+  L('MATERIALS = 21 - Default, Tyre.001, TIRE, Tyre_Stock, Tyre_Pro, Tyre_Thicc, Tyre, Tyres, TYRE, TIRE, TYRES');
+  L('PROP_... = ksAmbient, 0.25');
+  L('PROP_... = ksDiffuse, 0.12');
+  L('PROP_... = ksSpecular, 0.002');
+  L('PROP_... = ksSpecularEXP, 350');
+  L('PROP_... = KsAlphaRef, 0');
+  L('PROP_... = blurLevel, 0');
+  L('PROP_... = dirtyLevel, 0.02');
+  L('PROP_... = fresnelC, 0.000');
+  L('PROP_... = fresnelEXP, 5');
+  L('PROP_... = fresnelMaxLevel, 0.000');
+  L('PROP_... = isAdditive, 0');
+  L('DOUBLE_FACE_SHADOW_BIASED = 1');
+  L();
 
-  // ── Underglow ──
-  if (state.underglow_lights?.enabled) {
-    const v = state.underglow_lights.values;
-    const blinking = v.ug_blinking === '1';
-    const blinkLine = blinking ? '\nBLINKING_PATTERN=(0=1|1=0|2=1|3=0|4=1|5=0|6=1|7=0)\nBLINKING_DURATION=8' : '';
-    L(SEP);
-    L('; Underglow Lights');
-    L(SEP);
-    // Front
-    L('[LIGHT_EXTRA_1]');
-    L('LINE_FROM=-0.7, 0.20, -1.8');
-    L('LINE_TO=0.7, 0.20, -1.8');
-    L('BIND_TO_HEADLIGHTS=1');
-    L(`COLOR_FROM=${v.ug_color_from}`);
-    L(`COLOR_TO=${v.ug_color_to}`);
-    L('DIFFUSE_CONCENTRATION=0.7');
-    L('FADE_AT=150');
-    L('FADE_SMOOTH=8');
-    L(`RANGE=${v.ug_range}`);
-    L('RANGE_GRADIENT_OFFSET=0.1');
-    L(`SPOT=${v.ug_spot}`);
-    L('SPOT_SHARPNESS=0.5');
-    L('SPECULAR_MULT=0');
-    L('DIRECTION=0,-1,0');
-    L('SELF_LIGHTNING=1');
-    L('EXTERIOR_ONLY=0');
-    L('INTERIOR_ONLY=0');
-    L('SIMULATE_HEATING=0');
-    if (blinking) {
-      L('BLINKING_PATTERN=(0=1|1=0|2=1|3=0|4=1|5=0|6=1|7=0)');
-      L('BLINKING_DURATION=8');
-    }
-    L();
-    // Right side
-    L('[LIGHT_EXTRA_2]');
-    L('LINE_FROM=0.8, 0.20, 0.8');
-    L('LINE_TO=0.8, 0.20, -0.8');
-    L('BIND_TO_HEADLIGHTS=1');
-    L(`COLOR_FROM=${v.ug_color_from}`);
-    L(`COLOR_TO=${v.ug_color_to}`);
-    L('DIFFUSE_CONCENTRATION=0.8');
-    L('FADE_AT=150');
-    L('FADE_SMOOTH=8');
-    L(`RANGE=${v.ug_range}`);
-    L('RANGE_GRADIENT_OFFSET=0.1');
-    L(`SPOT=${v.ug_spot}`);
-    L('SPOT_SHARPNESS=0.5');
-    L('SPECULAR_MULT=0');
-    L('DIRECTION=0,-1,0');
-    L('SELF_LIGHTNING=1');
-    L('EXTERIOR_ONLY=0');
-    L('INTERIOR_ONLY=0');
-    L('SIMULATE_HEATING=0');
-    if (blinking) {
-      L('BLINKING_PATTERN=(0=1|1=0|2=1|3=0|4=1|5=0|6=1|7=0)');
-      L('BLINKING_DURATION=8');
-    }
-    L();
-    // Left side
-    L('[LIGHT_EXTRA_3]');
-    L('LINE_FROM=-0.8, 0.20, 0.8');
-    L('LINE_TO=-0.8, 0.20, -0.8');
-    L('BIND_TO_HEADLIGHTS=1');
-    L(`COLOR_FROM=${v.ug_color_from}`);
-    L(`COLOR_TO=${v.ug_color_to}`);
-    L('DIFFUSE_CONCENTRATION=0.8');
-    L('FADE_AT=150');
-    L('FADE_SMOOTH=8');
-    L(`RANGE=${v.ug_range}`);
-    L('RANGE_GRADIENT_OFFSET=0.1');
-    L(`SPOT=${v.ug_spot}`);
-    L('SPOT_SHARPNESS=0.5');
-    L('SPECULAR_MULT=0');
-    L('DIRECTION=0,-1,0');
-    L('SELF_LIGHTNING=1');
-    L('EXTERIOR_ONLY=0');
-    L('INTERIOR_ONLY=0');
-    L('SIMULATE_HEATING=0');
-    if (blinking) {
-      L('BLINKING_PATTERN=(0=1|1=0|2=1|3=0|4=1|5=0|6=1|7=0)');
-      L('BLINKING_DURATION=8');
-    }
-    L();
-    // Rear
-    L('[LIGHT_EXTRA_4]');
-    L('LINE_FROM=-0.7, 0.20, 2.0');
-    L('LINE_TO=0.7, 0.20, 2.0');
-    L('BIND_TO_HEADLIGHTS=1');
-    L(`COLOR_FROM=${v.ug_color_from}`);
-    L(`COLOR_TO=${v.ug_color_to}`);
-    L('DIFFUSE_CONCENTRATION=0.8');
-    L('FADE_AT=150');
-    L('FADE_SMOOTH=8');
-    L(`RANGE=${v.ug_range}`);
-    L('RANGE_GRADIENT_OFFSET=0.1');
-    L(`SPOT=${v.ug_spot}`);
-    L('SPOT_SHARPNESS=0.5');
-    L('SPECULAR_MULT=0');
-    L('DIRECTION=0,-1,0');
-    L('SELF_LIGHTNING=1');
-    L('EXTERIOR_ONLY=0');
-    L('INTERIOR_ONLY=0');
-    L('SIMULATE_HEATING=0');
-    if (blinking) {
-      L('BLINKING_PATTERN=(0=1|1=0|2=1|3=0|4=1|5=0|6=1|7=0)');
-      L('BLINKING_DURATION=8');
-    }
-    L();
-  }
+  // ── Driver (static) ──
+  L(SEP);
+  L('; Driver');
+  L(SEP);
+  L('[SHADER_REPLACEMENT_...]');
+  L('MESHES = DRIVER:suit');
+  L('MATERIALS = RT_DriverSuit');
+  L('SHADER = ksSkinnedMesh_NMDetaill');
+  L('RESOURCE_0 = txDiffuse');
+  L('RESOURCE_FILE_0 =/../../parts/Driver/2016_Suit_DIFF.dds');
+  L('RESOURCE_1 = txNormal');
+  L('RESOURCE_FILE_1 =/../../parts/Driver/2016_Suit_NM.dds');
+  L();
+  L('[SHADER_REPLACEMENT_...]');
+  L('MESHES = DRIVER:Gloves');
+  L('MATERIALS = RT_Gloves');
+  L('SHADER = ksSkinnedMesh_NMDetaill');
+  L('RESOURCE_0 = txDiffuse');
+  L('RESOURCE_FILE_0 =/../../parts/Driver/2016_Gloves_DIFF.dds');
+  L('RESOURCE_1 = txNormal');
+  L('RESOURCE_FILE_1 =/../../parts/Driver/2016_Gloves_nm.dds');
+  L();
+  L('[SHADER_REPLACEMENT_...]');
+  L('MATERIALS = RT_HELMET_Glass');
+  L('SHADER = ksPerPixelMultiMap');
+  L('RESOURCE_0 = txDiffuse');
+  L('RESOURCE_FILE_0 =/../../parts/Driver/Helmet_2012_Glass.dds');
+  L('RESOURCE_1 = txNormal');
+  L('RESOURCE_FILE_1 =/../../parts/Driver/flat_nm.dds');
+  L('RESOURCE_2 = txMaps');
+  L('RESOURCE_FILE_2 =/../../parts/Driver/HELMET_2012_map.dds');
+  L('RESOURCE_3 = txDetail');
+  L('RESOURCE_FILE_3 =null.dds');
+  L();
+  L('[SHADER_REPLACEMENT_...]');
+  L('MESHES = DRIVER:HELMET_SUB0');
+  L('MATERIALS = RT_Helemt');
+  L('SHADER = ksPerPixelMultiMap');
+  L('RESOURCE_0 = txDiffuse');
+  L('RESOURCE_FILE_0 =/../../parts/Driver/HELMET_2012.dds');
+  L('RESOURCE_1 = txNormal');
+  L('RESOURCE_FILE_1 =/../../flat_nm.dds');
+  L();
 
-  // ── Physics & FFB (rarely changed) ──
-  if (state.physics_ffb?.enabled) {
-    L(SEP);
-    L('; Physics & FFB');
-    L(SEP);
-    const v = state.physics_ffb.values;
-    L('[BASIC]');
-    L('BRAKES_THRESHOLD = 0.01');
-    L('LIGHT_DAMAGE_SPEED_MIN = 40');
-    L('LIGHT_DAMAGE_SPEED_MAX = 120');
-    L('IS_LOW_BEAM_AVAILABLE = 1');
-    L('HEADLIGHTS_ARE_HEADLIGHTS = 1');
-    L('STOP_LODS_ADJUSTMENT = 0');
-    L('IGNORE_OTHER_CONFIGS = 0');
-    L(`BOUNDING_SPHERE_RADIUS=${v.bounding_sphere}`);
-    L(`ENGINE_STALLED_RPM_THRESHOLD=${v.stalled_rpm}`);
-    L('TURNING_LIGHTS_REPEAT=1');
-    L();
-    L('[BOUNCED_INTERIOR_LIGHT]');
-    L('ACTIVE=1');
-    L('DIRECTION=0, 1, -2');
-    L('MULT=1, 1, 1, 0.5');
-    L('OFFSET=0, -1, 3');
-    L('RANGE=3.2');
-    L('RANGE_GRADIENT_OFFSET=0.9');
-    L('SPOT=20');
-    L('SPOT_SHARPNESS=0.9');
-    L();
-    L('[INCLUDE: common/ffbtweaks.ini]');
-    L('[INCLUDE: common/general.ini]');
-    L();
-    L('[GYRO2]');
-    L('ENABLED=1');
-    L();
-    L('[POSTPROCESSING]');
-    L('CLEAN_FFB=1');
-    L();
-    L('[POSTPROCESSING_SCRIPT_SETTINGS]');
-    L('__PLUGIN_SETTINGS=POSTPROCESSING_SCRIPT/IMPLEMENTATION, extension/state/lua/soft_lock/{0}__settings.ini');
-    L();
-    L('[CUSTOM_SOFT_LOCK]');
-    L('ENABLED=1');
-    L(`PADDING=${v.softlock_padding}`);
-    L('SHIFT_PADDING=0.8');
-    L('FORCE_FACTOR=1');
-    L('SPEED_FACTOR=1');
-    L('DAMPER=0');
-    L();
-    L('[REAL_FEEL]');
-    L('ENABLED=0');
-    L('ENABLE_FOR_ALL=0');
-    L();
-    L('[TWEAKS]');
-    L('STRUT_FFB_ADJUSTMENT=1');
-    L('FADE_IN_AFTER_LOADING=1');
-    L();
-    L('[PHYSICS_EXPERIMENTS]');
-    L('EXTENDED_PHYSICS=1');
-    L('STALLING=0');
-    L('ENABLE_MESH_COLLIDER_SOONER=1');
-    L('CLAMP_MESH_COLLIDERS=1');
-    L('EXTEND_COLLIDER_BOXES=1');
-    L('EXTRAPOLATE_STATE=1');
-    L('DISABLE_AUTOBRAKING=0');
-    L('AWAKE_IN_PITS=1');
-    L('PHYSICS_SHADOWS=1');
-    L('TYRE_SHIFT_SURFACE_PROPERLY=1');
-    L('TYRE_SINE_ALTERS_NORMALS=1');
-    L('TYRE_PERLIN_SURFACE_NOISE=1');
-    L('ALT_COLLISIONS_HANDLING=1');
-    L('ALT_COLLISIONS_PROCESSING=1');
-    L('FIX_SPAWN_POINTS=1');
-    L('PARALLELIZED_CONTACTS=1');
-    L('ALT_DEPTH_FOR_CAR_BOX_VS_TRACK=1');
-    L('TOE_ROD_THING=1');
-    L('DIFF_THING=1');
-    L();
-    L('[PHYSICS_EXPERIMENTS_DONE]');
-    L('SLIDING_FIX=1');
-    L('BRAKES_LIMIT=1');
-    L('RIM_COLLISION=1');
-    L('SMOOTH_COLLISIONS=1');
-    L('ADAPTIVE_HARD_COLLISIONS=1');
-    L('OPTIMIZE_ROTATION=1');
-    L('ODE_AFTER_GRAPHICS=1');
-    L('SMOOTH_CONTROLS_LOCKING=1');
-    L('RANDOMIZE_WHEEL_ANGLES=1');
-    L('CUSTOM_POBJECTS_MOTION=1');
-    L('CUSTOM_THREADPOOL=1');
-    L('ALTERNATIVE_OPTIMAL_BRAKE=1');
-    L('REPAIR_WHEELS=1');
-    L('FIX_GROUND_COLLIDERS=1');
-    L('FIX_SURFACE_TYPES=1');
-    L();
-    L('[REFLECTIONS_FX]');
-    L('ALLOW_INTERIOR_SSAO=0');
-    L('ALLOW_INTERIOR_SSGI=0');
-    L('AUTOFIX=1');
-    L('MASK_CUBEMAP_ENABLED=1');
-    L('MASK_CUBEMAP_OFFSET=0, -0.1, 0.2');
-    L('MASK_CUBEMAP_TWEAK=0.5');
-    L();
-    L('[SMART_MIRROR]');
-    L('DISALLOW_MAPPING_NORMALIZATION=0');
-    L('DISALLOW_REAR_MIRROR=0');
-    L('DISALLOW_REFLECTION_TILTING=0');
-    L('SHAKING=1');
-    L();
-    L('[SCRIPT_...]');
-    L('SCRIPT = nos.lua');
-    L('[SCRIPT_...]');
-    L('SCRIPT = audio.lua');
-    L('[SCRIPT_...]');
-    L('SCRIPT = bending.lua');
-    L('[SCRIPT_...]');
-    L('SCRIPT = collision_sfx.lua');
-    L();
-    L('[EXTRA_SWITCHES]');
-    L('SWITCH_E_FLAGS = HOLD_MODE');
+  // ── Steering Wheel (static) ──
+  L(SEP);
+  L('; Steering Wheel');
+  L(SEP);
+  L('[MODEL_REPLACEMENT_...]');
+  L('FILE = car.kn5');
+  L('INSERT = /../../parts/Steering Wheels/vertex_wheel.kn5');
+  L('INSERT_AFTER = COCKPIT_HR');
+  L('HIDE =');
+  L('SCALE = 1.0, 1.0, 1.0');
+  L('ROTATION = 0.0, 0.0, 0.0');
+  L('OFFSET = 0, 0, 0');
+  L();
+
+  // ── TyresFX Custom Textures (static) ──
+  L(SEP);
+  L('; TyresFX Custom Textures');
+  L(SEP);
+  L('[SHADER_REPLACEMENT_...]');
+  L('MATERIALS = 21 - Default, Tyre.001, Tyre_Stock, Tyre_Pro, Tyre_Thicc');
+  L('SHADER = ksTyresFX');
+  L();
+  // Compounds 0-2: Federal
+  for (let i = 0; i <= 2; i++) {
+    L(`[TYRES_FX_CUSTOMTEXTURE_${i}]`);
+    L('TXDIFFUSE = /../../parts/tyre/Federal_595RS_white_letter/tyre1.dds');
+    L('TXBLUR = /../../parts/tyre/Federal_595RS_white_letter/tyre1.dds');
+    L('TXNORMAL = /../../parts/tyre/Federal_595RS_white_letter/tyre1_NM.dds');
+    L('TXNORMALBLUR = /../../parts/tyre/Federal_595RS_white_letter/tyre1_NM.dds');
     L();
   }
+  // Compounds 3-5: Kenda
+  for (let i = 3; i <= 5; i++) {
+    L(`[TYRES_FX_CUSTOMTEXTURE_${i}]`);
+    L('TXDIFFUSE = /../../parts/tyre/KendaKR20A/tyre.dds');
+    L('TXBLUR = /../../parts/tyre/KendaKR20A/tyre.dds');
+    L('TXNORMAL = /../../parts/tyre/KendaKR20A/tyre_nm.dds');
+    L('TXNORMALBLUR = /../../parts/tyre/KendaKR20A/tyre_nm.dds');
+    L();
+  }
+  // Compound 6: Armstrong
+  L('[TYRES_FX_CUSTOMTEXTURE_6]');
+  L('TXDIFFUSE = /../../parts/tyre/Armstrong_BluTracHP/tyre.dds');
+  L('TXBLUR = /../../parts/tyre/Armstrong_BluTracHP/tyre.dds');
+  L('TXDIRT = /../../parts/tyre/Armstrong_BluTracHP/tyre_dirt.dds');
+  L('TXNORMAL = /../../parts/tyre/Armstrong_BluTracHP/tyre_nm.dds');
+  L('TXNORMALBLUR = /../../parts/tyre/Armstrong_BluTracHP/tyre_nm.dds');
+  L();
+  // Compound 7: Accelera
+  L('[TYRES_FX_CUSTOMTEXTURE_7]');
+  L('TXDIFFUSE = /../../parts/tyre/accelera_651/tyre.dds');
+  L('TXBLUR = /../../parts/tyre/accelera_651/tyre_blur.dds');
+  L('TXDIRT = /../../parts/tyre/accelera_651/dirt.dds');
+  L('TXNORMAL = /../../parts/tyre/accelera_651/tyre_nm.dds');
+  L('TXNORMALBLUR = /../../parts/tyre/accelera_651/tyre_blur_nm.dds');
+  L();
+
+  // ── Brake FX (static) ──
+  L(SEP);
+  L('; Brake FX');
+  L(SEP);
+  L('[Material_CarPaint_Metallic]');
+  L('Materials = EXT_CaliperHatPaint');
+  L('NormalsMode = BASIC');
+  L('ClearCoatThickness = 0.1');
+  L('SpecularColor = 1');
+  L('SpecularMult = 1.25');
+  L('FresnelMax = 0.5');
+  L('FresnelC = 0.14');
+  L('BrightnessAdjustment = 0.55');
+  L();
+  L('[Material_Aluminium_v2]');
+  L('Materials= EXT_CaliperHardware');
+  L('Metalness = 0.9');
+  L('Reflectance = 0');
+  L('Smoothness = 0');
+  L('BrightnessAdjustment = 0.38');
+  L('DetailTexture = 1');
+  L('DetailNormalTexture = common/pbr_metal.dds');
+  L('DetailNormalPBRSecondaryColor = 0, 0, 0, 0');
+  L('DetailScale = 0');
+  L('DetailNormalBlend = 1');
+  L('DetailNormalPBRSmoothnessGamma = 1');
+  L('OcclusionSource = MAPS_ALPHA');
+  L();
+  L('[BRAKEDISC_FX]');
+  L('ACTIVE = 1');
+  L('CERAMIC = 1');
+  L('CARVED = 0');
+  L('CARVED_FREQUENCY = 20');
+  L('GLOW_OFFSET = 1.5');
+  L('DEBUG = 0');
+  L('DISC_INTERNAL_RADIUS = 0.1');
+  L('DISC_RADIUS = 0.16383');
+  L('WEAR_FORCE = 0.45');
+  L('GLOW_FORCE = 0');
+  L();
+
+  // ── Exhaust Flames (static) ──
+  L(SEP);
+  L('; Exhaust Flames');
+  L(SEP);
+  L('[EXHAUST_FLAMES]');
+  L('ANTILAG=1');
+  L('ANTILAG_DELAY=0.0');
+  L('ANTILAG_INTENSITY=1');
+  L('ANTILAG_TURBO_THRESHOLD=0');
+  L('DAMAGE=1');
+  L('DAMAGE_DURATION=1.00');
+  L('DAMAGE_INTENSITY=1');
+  L('DAMAGE_PROBABILITY=1');
+  L('DISCHARGE=1');
+  L('DISCHARGE_CHARGE_TIME=0.1');
+  L('DISCHARGE_DELAY=0');
+  L('DISCHARGE_DURATION=0.250');
+  L('DISCHARGE_PROBABILITY=0.25');
+  L('DISCHARGE_INTENSITY=0.5');
+  L('DISCHARGE_WATER_TEMPERATURE_THRESHOLD=70');
+  L('FLAT_SHIFT=1');
+  L('FLAT_SHIFT_COOLDOWN=0');
+  L('FLAT_SHIFT_DURATION=0.25');
+  L('FLAT_SHIFT_GAS_THRESHOLD=75');
+  L('FLAT_SHIFT_INTENSITY=0.65');
+  L('FLAT_SHIFT_PROBABILITY=1');
+  L('LIMITER=1');
+  L('LIMITER_DELAY=0');
+  L('LIMITER_INTENSITY=0.15');
+  L();
+  L('[LIGHT_FLAMES]');
+  L('CAR_BRIGHTNESS_MULT=0,9');
+  L('OFFSET_DIR=0,15');
+  L('OFFSET_POS=0,25');
+  L('SPOT=300');
+  L();
+
+  // ── Particles FX (static) ──
+  L(SEP);
+  L('; Particles FX');
+  L(SEP);
+  L('[PARTICLES_FX]');
+  L('BRAKES_SMOKE=1');
+  L('ENGINE_SMOKE=1');
+  L('EXHAUST_SMOKE=1');
+  L('DRAG_MULT=2');
+  L('LIFT_MULT=0.1');
+  L('BODY_SMOKE_AMOUNT=0');
+  L("BODY_SMOKE_COLOR='0, 0, 0, 0'");
+  L('BODY_SMOKE_COLOR_CONSISTENCY=0');
+  L('BODY_SMOKE_GROW_MULTIPLIER=1');
+  L('BODY_SMOKE_INTENSITY=1');
+  L('BODY_SMOKE_LIFETIME=1');
+  L('BODY_SMOKE_SIZE_MULTIPLIER=1');
+  L('BODY_SMOKE_SPREAD_MULTIPLIER=1');
+  L('BODY_SMOKE_TARGET_Y_VELOCITY=-0.3');
+  L('BODY_SMOKE_THICKNESS=0');
+  L('BODY_SPARKS_AMOUNT=0.25');
+  L("BODY_SPARKS_COLOR='1, 0.5, 0, 10'");
+  L('BODY_SPARKS_INTENSITY=0.2');
+  L('BODY_SPARKS_LIFETIME=0.4');
+  L('COLLIDER_0_SMOKE_AMOUNT=0');
+  L("COLLIDER_0_SMOKE_COLOR='0, 0, 0, 0'");
+  L('COLLIDER_0_SMOKE_COLOR_CONSISTENCY=0');
+  L('COLLIDER_0_SMOKE_GROW_MULTIPLIER=1');
+  L('COLLIDER_0_SMOKE_INTENSITY=1');
+  L('COLLIDER_0_SMOKE_LIFETIME=1');
+  L('COLLIDER_0_SMOKE_SIZE_MULTIPLIER=1');
+  L('COLLIDER_0_SMOKE_SPREAD_MULTIPLIER=1');
+  L('COLLIDER_0_SMOKE_TARGET_Y_VELOCITY=-0.3');
+  L('COLLIDER_0_SMOKE_THICKNESS=0');
+  L('COLLIDER_0_SPARKS_AMOUNT=0.25');
+  L("COLLIDER_0_SPARKS_COLOR='1, 0.5, 0, 10'");
+  L('COLLIDER_0_SPARKS_INTENSITY=0.2');
+  L('COLLIDER_0_SPARKS_LIFETIME=0.4');
+  L("SMOKE_BS_OFFSET_FRONT='0, 0, 0'");
+  L("SMOKE_BS_OFFSET_MIDDLE='0, 0, 0'");
+  L("SMOKE_BS_OFFSET_REAR='0, 0, 0'");
+  L('SMOKE_BS_RADIUS_FRONT=1.05');
+  L('SMOKE_BS_RADIUS_MIDDLE=1.05');
+  L('SMOKE_BS_RADIUS_REAR=1.05');
+  L("SMOKE_COLLIDER_OFFSET='0, 0'");
+  L('SMOKE_COLLIDER_RADIUS=2');
+  L('SMOKE_FLAMES_POWER_APPEARING=60');
+  L('SMOKE_FLAMES_POWER_MAIN=30');
+  L('SMOKE_FLAMES_RADIUS_APPEARING=10');
+  L('SMOKE_FLAMES_RADIUS_MAIN=1');
+  L('SMOKE_PUSHAWAY_STRENGTH=12');
+  L('SPARKS_AMOUNT_MULT=2');
+  L('SPARKS_COOLDOWN_LAG=0.96');
+  L('SPARKS_DEPTH_EXP=4');
+  L('SPARKS_MAX_DEPTH=0.0025');
+  L('SPARKS_OVERLOAD_LAG=0.7');
+  L("TRACES_LIGHTS_POS='0.658934, 0.739916, -2.08433'");
+  L('TRACES_LIGHTS_SIZE=-1');
+  L('SMOKE_BLOCK_START = 0.4');
+  L('SMOKE_BLOCK_END = 0.6');
+  L('SMOKE_COLOR = 43, 100, 130');
+  L('SMOKE_FORCE_THICKNESS = 0.0');
+  L();
+
+  // ── TyresFX Flex (static) ──
+  L(SEP);
+  L('; TyresFX Flex');
+  L(SEP);
+  L('[TYRES_FX_FRONT]');
+  L('ENABLED=1');
+  L('FLEX_MAX_SKEW_MULT=1.1');
+  L('FLEX_MULT=1');
+  L('FLEX_PROFILE_MULT=0.45');
+  L('FLEX_SKEW_RANGE_MULT=3');
+  L('FLEX_SKEW_SMOOTHING=0.1');
+  L('FLEX_SQUASH_SMOOTHING=1.1');
+  L('NOFX_DISTANCE_SWITCH=40');
+  L('VISIBLE_IN_INTERIOR_CAM=1');
+  L();
+  L('[TYRES_FX_REAR]');
+  L('ENABLED=1');
+  L('FLEX_MAX_SKEW_MULT=1.1');
+  L('FLEX_MULT=1');
+  L('FLEX_PROFILE_MULT=1.25');
+  L('FLEX_SKEW_RANGE_MULT=3');
+  L('FLEX_SKEW_SMOOTHING=0.1');
+  L('FLEX_SQUASH_SMOOTHING=0.1');
+  L('NOFX_DISTANCE_SWITCH=40');
+  L('VISIBLE_IN_INTERIOR_CAM=1');
+  L();
+
+  // ── Driver 3D Model (static) ──
+  L('[DRIVER3D_MODEL]');
+  L('NAME=/../../parts/Driver/Bare_Hands.kn5');
+  L('POSITION=0.0,0.0,0.0');
+  L();
+
+  // ── Physics & FFB (static) ──
+  L(SEP);
+  L('; Physics & FFB');
+  L(SEP);
+  L('[BASIC]');
+  L('BRAKES_THRESHOLD = 0.01');
+  L('LIGHT_DAMAGE_SPEED_MIN = 40');
+  L('LIGHT_DAMAGE_SPEED_MAX = 120');
+  L('IS_LOW_BEAM_AVAILABLE = 1');
+  L('HEADLIGHTS_ARE_HEADLIGHTS = 1');
+  L('STOP_LODS_ADJUSTMENT = 0');
+  L('IGNORE_OTHER_CONFIGS = 0');
+  L('BOUNDING_SPHERE_RADIUS=3');
+  L('ENGINE_STALLED_RPM_THRESHOLD=750');
+  L('TURNING_LIGHTS_REPEAT=1');
+  L();
+  L('[BOUNCED_INTERIOR_LIGHT]');
+  L('ACTIVE=1');
+  L('DIRECTION=0, 1, -2');
+  L('MULT=1, 1, 1, 0.5');
+  L('OFFSET=0, -1, 3');
+  L('RANGE=3.2');
+  L('RANGE_GRADIENT_OFFSET=0.9');
+  L('SPOT=20');
+  L('SPOT_SHARPNESS=0.9');
+  L();
+  L('[INCLUDE: common/ffbtweaks.ini]');
+  L('[INCLUDE: common/general.ini]');
+  L();
+  L('[GYRO2]');
+  L('ENABLED=1');
+  L();
+  L('[POSTPROCESSING]');
+  L('CLEAN_FFB=1');
+  L();
+  L('[POSTPROCESSING_SCRIPT_SETTINGS]');
+  L('__PLUGIN_SETTINGS=POSTPROCESSING_SCRIPT/IMPLEMENTATION, extension/state/lua/soft_lock/{0}__settings.ini');
+  L();
+  L('[CUSTOM_SOFT_LOCK]');
+  L('ENABLED=1');
+  L('PADDING=10');
+  L('SHIFT_PADDING=0.8');
+  L('FORCE_FACTOR=1');
+  L('SPEED_FACTOR=1');
+  L('DAMPER=0');
+  L();
+  L('[REAL_FEEL]');
+  L('ENABLED=0');
+  L('ENABLE_FOR_ALL=0');
+  L();
+  L('[TWEAKS]');
+  L('STRUT_FFB_ADJUSTMENT=1');
+  L('FADE_IN_AFTER_LOADING=1');
+  L();
+  L('[PHYSICS_EXPERIMENTS]');
+  L('EXTENDED_PHYSICS=1');
+  L('STALLING=0');
+  L('ENABLE_MESH_COLLIDER_SOONER=1');
+  L('CLAMP_MESH_COLLIDERS=1');
+  L('EXTEND_COLLIDER_BOXES=1');
+  L('EXTRAPOLATE_STATE=1');
+  L('DISABLE_AUTOBRAKING=0');
+  L('AWAKE_IN_PITS=1');
+  L('PHYSICS_SHADOWS=1');
+  L('TYRE_SHIFT_SURFACE_PROPERLY=1');
+  L('TYRE_SINE_ALTERS_NORMALS=1');
+  L('TYRE_PERLIN_SURFACE_NOISE=1');
+  L('ALT_COLLISIONS_HANDLING=1');
+  L('ALT_COLLISIONS_PROCESSING=1');
+  L('FIX_SPAWN_POINTS=1');
+  L('PARALLELIZED_CONTACTS=1');
+  L('ALT_DEPTH_FOR_CAR_BOX_VS_TRACK=1');
+  L('TOE_ROD_THING=1');
+  L('DIFF_THING=1');
+  L();
+  L('[PHYSICS_EXPERIMENTS_DONE]');
+  L('SLIDING_FIX=1');
+  L('BRAKES_LIMIT=1');
+  L('RIM_COLLISION=1');
+  L('SMOOTH_COLLISIONS=1');
+  L('ADAPTIVE_HARD_COLLISIONS=1');
+  L('OPTIMIZE_ROTATION=1');
+  L('ODE_AFTER_GRAPHICS=1');
+  L('SMOOTH_CONTROLS_LOCKING=1');
+  L('RANDOMIZE_WHEEL_ANGLES=1');
+  L('CUSTOM_POBJECTS_MOTION=1');
+  L('CUSTOM_THREADPOOL=1');
+  L('ALTERNATIVE_OPTIMAL_BRAKE=1');
+  L('REPAIR_WHEELS=1');
+  L('FIX_GROUND_COLLIDERS=1');
+  L('FIX_SURFACE_TYPES=1');
+  L();
+  L('[REFLECTIONS_FX]');
+  L('ALLOW_INTERIOR_SSAO=0');
+  L('ALLOW_INTERIOR_SSGI=0');
+  L('AUTOFIX=1');
+  L('MASK_CUBEMAP_ENABLED=1');
+  L('MASK_CUBEMAP_OFFSET=0, -0.1, 0.2');
+  L('MASK_CUBEMAP_TWEAK=0.5');
+  L();
+  L('[SMART_MIRROR]');
+  L('DISALLOW_MAPPING_NORMALIZATION=0');
+  L('DISALLOW_REAR_MIRROR=0');
+  L('DISALLOW_REFLECTION_TILTING=0');
+  L('SHAKING=1');
+  L();
+  L('[SCRIPT_...]');
+  L('SCRIPT = nos.lua');
+  L('[SCRIPT_...]');
+  L('SCRIPT = audio.lua');
+  L('[SCRIPT_...]');
+  L('SCRIPT = bending.lua');
+  L('[SCRIPT_...]');
+  L('SCRIPT = collision_sfx.lua');
+  L();
+  L('[EXTRA_SWITCHES]');
+  L('SWITCH_E_FLAGS = HOLD_MODE');
+  L();
 
   // Show output
   const output = lines.join('\n');
