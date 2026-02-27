@@ -47,37 +47,37 @@ const STEPS = [
   {
     id: 'glass',
     title: 'Glass Shaders',
-    desc: 'Exterior and interior glass materials.',
+    desc: 'Exterior and interior glass reflections and shaders.',
     sections: [
       {
         id: 'ext_glass',
-        question: 'Do you want Exterior Glass replacement?',
+        question: 'Do you want Exterior Glass Reflection Updated?',
         fields: [
           { id: 'ext_glass_mat', label: 'Exterior Glass Material(s)', hint: 'CM Showroom — click the glass, copy material name', paste: true },
         ]
       },
       {
         id: 'int_glass',
-        question: 'Do you want Interior Windscreen shader?',
+        question: 'Do you want Interior Windscreen Shader Updated?',
         fields: [
           { id: 'int_glass_mat', label: 'Interior Window Material(s)', hint: 'Click interior window in CM Showroom, copy material name', paste: true },
         ]
       },
     ]
   },
-  // ─── 3. Exhaust ───
+  // ─── 3. Exhaust / Shifter ───
   {
     id: 'exhaust',
-    title: 'Shaking Exhaust',
-    desc: 'Add animated exhaust tips that shake with RPM.',
+    title: 'Shaking Exhaust / Shifter',
+    desc: 'Add animated exhaust tips or shifter that shake with RPM.',
     sections: [
       {
         id: 'shaking_exhaust',
-        question: 'Do you want Shaking Exhaust?',
+        question: 'Do you want Shaking Exhaust/Shifter?',
         repeater: true,
-        repeatLabel: '+ Add Another Exhaust',
+        repeatLabel: '+ Add Another',
         fields: [
-          { id: 'exhaust_mesh', label: 'Exhaust Mesh', hint: 'Click exhaust tip in CM Showroom, copy mesh name', paste: true },
+          { id: 'exhaust_mesh', label: 'Mesh Name', hint: 'Click exhaust tip or shifter in CM Showroom, copy mesh name', paste: true },
           { id: 'exhaust_point', label: 'POINT_0 (x, y, z)', default: '1, 2, 3' },
           { id: 'exhaust_radius', label: 'POINT_0_RADIUS', default: '1', type: 'number', step: '0.1' },
           { id: 'exhaust_exp', label: 'POINT_0_EXP', default: '1', type: 'number', step: '0.1' },
@@ -86,15 +86,15 @@ const STEPS = [
       },
     ]
   },
-  // ─── 4. Underside ───
+  // ─── 4. Wheel Well / Undercarriage ───
   {
     id: 'underside',
-    title: 'Underside Darkening',
-    desc: 'Darken materials on the underside of the car.',
+    title: 'Wheel Well / Under Carriage Shadows',
+    desc: 'Darken wheel wells and undercarriage materials for realism.',
     sections: [
       {
         id: 'underside_dark',
-        question: 'Do you want Underside Darkening?',
+        question: 'Do you want Wheel Well/Under Carriage Shadows Darker?',
         fields: [
           { id: 'underside_mats', label: 'Underside Material(s)', hint: 'Material names for dark underside areas', paste: true },
         ]
@@ -105,13 +105,13 @@ const STEPS = [
   {
     id: 'collider',
     title: 'Smoke Collider',
-    desc: 'Add a tire smoke collider mesh.',
+    desc: 'Select the car exterior mesh that would touch the ground or wall for smoke/spark collision.',
     sections: [
       {
         id: 'smoke_collider',
-        question: 'Do you want a Smoke Collider?',
+        question: 'Select Car Exterior That Would Touch Ground or Wall',
         fields: [
-          { id: 'collider_mesh', label: 'Collider Mesh', hint: 'Mesh name for tire smoke collision', paste: true },
+          { id: 'collider_mesh', label: 'Collider Mesh', hint: 'Mesh name for tire smoke / spark collision', paste: true },
         ]
       },
     ]
@@ -119,12 +119,12 @@ const STEPS = [
   // ─── 6. Carpaint ───
   {
     id: 'carpaint',
-    title: 'Carpaint',
-    desc: 'Apply CSP carpaint material shader.',
+    title: 'Carpaint Reflection',
+    desc: 'Apply improved CSP carpaint reflection shader to the body.',
     sections: [
       {
         id: 'carpaint_mat',
-        question: 'Do you want CSP Carpaint?',
+        question: 'Do you want Carpaint Reflection Redone?',
         fields: [
           { id: 'carpaint_material', label: 'Carpaint Material', hint: 'Main body paint material name', paste: true },
         ]
@@ -134,12 +134,12 @@ const STEPS = [
   // ─── 7. Damage ───
   {
     id: 'damage',
-    title: 'Car Damage Textures',
-    desc: 'Damage, dust, and dirt shader replacement.',
+    title: 'Visual Damage',
+    desc: 'Add visible damage, dust, and dirt to the car body.',
     sections: [
       {
         id: 'damage_tex',
-        question: 'Do you want Car Damage Textures?',
+        question: 'Do you want To Add Visual Damage?',
         fields: [
           { id: 'damage_materials', label: 'Body Material(s) for damage', hint: 'Same as carpaint material usually', paste: true },
           { id: 'damage_ao_dir', label: 'AO Map Direction', type: 'choice', choices: [
@@ -173,21 +173,21 @@ const STEPS = [
     sections: [
       {
         id: 'gold_rims',
-        question: 'Do you want Gold Rim texture?',
+        question: 'Do you want Gold Rim Texture?',
         fields: [
           { id: 'gold_rim_mats', label: 'Gold Rim Material(s)', hint: 'Material name for gold-colored rims', paste: true },
         ]
       },
       {
         id: 'silver_rims',
-        question: 'Do you want Silver Rim texture?',
+        question: 'Do you want Silver Rim Texture?',
         fields: [
           { id: 'silver_rim_mats', label: 'Silver Rim Material(s)', hint: 'Material name for silver-colored rims', paste: true },
         ]
       },
       {
         id: 'painted_tex',
-        question: 'Do you want a Painted Texture replacement?',
+        question: 'Do you want a Painted Texture Replacement?',
         fields: [
           { id: 'painted_tex_mats', label: 'Painted Material(s)', paste: true },
         ]
@@ -201,57 +201,7 @@ const STEPS = [
       },
     ]
   },
-  // ─── 10. Custom Rims ───
-  {
-    id: 'rims',
-    title: 'Custom Rims',
-    desc: 'Replace front and rear rim models.',
-    sections: [
-      {
-        id: 'custom_rims',
-        question: 'Do you want Custom Rims?',
-        fields: [
-          { id: 'rim_file', label: 'Car KN5 File(s)', hint: 'Car kn5s including LoD kn5s — comma separated', paste: true },
-          { id: 'rim_front_orig', label: 'Front Original Rim Meshes', hint: 'CM Showroom — click each rim part, copy mesh name', paste: true },
-          { id: 'rim_front_kn5', label: 'Front Rim KN5 Path', default: '/../../parts/rims/__________________.kn5', paste: true },
-          { id: 'rim_front_radius', label: 'Front Rim Radius', default: '0.22', type: 'number', step: '0.001' },
-          { id: 'rim_front_width', label: 'Front Rim Width', default: '0.21', type: 'number', step: '0.001' },
-          { id: 'rim_front_offset', label: 'Front Offset (x, y)', default: '0.00, 0.00', hint: '(-) inward, (+) outward' },
-          { id: 'rim_rear_orig', label: 'Rear Original Rim Meshes', paste: true },
-          { id: 'rim_rear_kn5', label: 'Rear Rim KN5 Path', default: '/../../parts/rims/__________________.kn5', paste: true },
-          { id: 'rim_rear_radius', label: 'Rear Rim Radius', default: '0.218', type: 'number', step: '0.001' },
-          { id: 'rim_rear_width', label: 'Rear Rim Width', default: '0.205', type: 'number', step: '0.001' },
-          { id: 'rim_rear_offset', label: 'Rear Offset (x, y)', default: '0.00, 0.00', hint: '(-) inward, (+) outward' },
-        ]
-      },
-    ]
-  },
-  // ─── 11. Tire Replacement ───
-  {
-    id: 'tires',
-    title: 'Tire Replacement',
-    desc: 'Replace tire models (front and rear).',
-    sections: [
-      {
-        id: 'tire_replace',
-        question: 'Do you want Tire Replacement?',
-        fields: [
-          { id: 'tire_file', label: 'Car KN5 File(s)', paste: true },
-          { id: 'tire_front_orig', label: 'Front Original Tire Meshes', paste: true },
-          { id: 'tire_front_kn5', label: 'Front Tire KN5 Path', default: '/../../parts/tyre/Tyre_XXX.kn5', paste: true },
-          { id: 'tire_front_radius', label: 'Front Tire Radius', default: '0.230', type: 'number', step: '0.001' },
-          { id: 'tire_front_width', label: 'Front Tire Width', default: '0.185', type: 'number', step: '0.001' },
-          { id: 'tire_front_offset', label: 'Front Offset (x, y)', default: '-0.0, -0.02' },
-          { id: 'tire_rear_orig', label: 'Rear Original Tire Meshes', paste: true },
-          { id: 'tire_rear_kn5', label: 'Rear Tire KN5 Path', default: '/../../parts/tyre/Tyre_XXX.kn5', paste: true },
-          { id: 'tire_rear_radius', label: 'Rear Tire Radius', default: '0.230', type: 'number', step: '0.001' },
-          { id: 'tire_rear_width', label: 'Rear Tire Width', default: '0.185', type: 'number', step: '0.001' },
-          { id: 'tire_rear_offset', label: 'Rear Offset (x, y)', default: '-0.0, -0.02' },
-        ]
-      },
-    ]
-  },
-  // ─── 12. Underglow ───
+  // ─── 10. Underglow ───
   {
     id: 'underglow',
     title: 'Underglow Lights',
@@ -272,23 +222,37 @@ const STEPS = [
       },
     ]
   },
-  // ─── 13. Emissive ───
+  // ─── 11. Hide Parts ───
   {
     id: 'emissive',
-    title: 'Emissive Extras / Invisible Parts',
-    desc: 'Glowing elements and toggle-visibility parts.',
+    title: 'Hide Parts',
+    desc: 'Make parts invisible via emissive toggle visibility.',
     sections: [
       {
         id: 'emissive_extra',
-        question: 'Do you want Emissive Extras?',
+        question: 'Do You Want to Hide Any Parts?',
         fields: [
-          { id: 'emissive_name', label: 'Emissive Name/Mesh', paste: true },
+          { id: 'emissive_name', label: 'Part Name/Mesh to Hide', paste: true },
           { id: 'emissive_color', label: 'COLOR (r, g, b)', default: '1, 0, 0' },
           { id: 'emissive_location', label: 'Location', type: 'choice', choices: [
             { value: 'FRONT', label: 'Front' },
             { value: 'REAR', label: 'Rear' },
           ], default: 'FRONT' },
         ]
+      },
+    ]
+  },
+  // ─── 12. Custom Rims & Tires (FINAL) ───
+  {
+    id: 'rims_final',
+    title: 'Custom Rims and Tire Replacements',
+    desc: 'Swap rim and tire models using the Rim & Tire Swap tool.',
+    sections: [
+      {
+        id: 'rims_tires_final',
+        question: 'Do you want Custom Rims and Tire Replacements?',
+        isFinal: true,
+        fields: []
       },
     ]
   },
@@ -330,13 +294,18 @@ function buildWizard() {
       html += `<button data-answer="yes" onclick="toggleSection('${sec.id}', true, this)">✅ Yes</button>`;
       html += `<button data-answer="no" onclick="toggleSection('${sec.id}', false, this)">❌ No</button>`;
       html += `</div>`;
-      html += `<div class="fields" id="fields-${sec.id}">`;
-      html += renderFields(sec.fields, sec.id, 0);
-      if (sec.repeater) {
-        html += `<div id="repeater-${sec.id}"></div>`;
-        html += `<button class="repeater-add" onclick="addRepeat('${sec.id}')">${sec.repeatLabel || '+ Add Another'}</button>`;
+
+      if (sec.fields.length > 0) {
+        html += `<div class="fields" id="fields-${sec.id}">`;
+        html += renderFields(sec.fields, sec.id, 0);
+        if (sec.repeater) {
+          html += `<div id="repeater-${sec.id}"></div>`;
+          html += `<button class="repeater-add" onclick="addRepeat('${sec.id}')">${sec.repeatLabel || '+ Add Another'}</button>`;
+        }
+        html += `</div>`;
       }
-      html += `</div></div>`;
+
+      html += `</div>`;
     });
 
     div.innerHTML = html;
@@ -382,8 +351,19 @@ window.toggleSection = function(secId, enabled, btn) {
     b.classList.remove('selected-yes', 'selected-no');
   });
   btn.classList.add(enabled ? 'selected-yes' : 'selected-no');
+
+  // Update card border
+  parent.classList.remove('answered-yes', 'answered-no');
+  parent.classList.add(enabled ? 'answered-yes' : 'answered-no');
+
   const fields = document.getElementById(`fields-${secId}`);
-  fields.classList.toggle('open', enabled);
+  if (fields) fields.classList.toggle('open', enabled);
+
+  // Special: final rims/tires question — "Yes" opens Rim & Tire Swap in new tab
+  const sec = STEPS.flatMap(s => s.sections).find(s => s.id === secId);
+  if (sec?.isFinal && enabled) {
+    window.open('https://realisimhq.github.io/Rim-and-Tire-Swap/', '_blank');
+  }
 };
 
 window.updateVal = function(secId, fid, val, repeatIdx) {
@@ -402,7 +382,7 @@ window.pasteInto = async function(secId, fid, repeatIdx) {
     if (input) {
       input.value = text.trim();
       updateVal(secId, fid, text.trim(), repeatIdx);
-      input.style.borderColor = 'var(--green)';
+      input.style.borderColor = 'var(--success)';
       setTimeout(() => input.style.borderColor = '', 800);
     }
   } catch (e) {
@@ -421,7 +401,7 @@ window.addRepeat = function(secId) {
   const container = document.getElementById(`repeater-${secId}`);
   const entry = document.createElement('div');
   entry.className = 'exhaust-entry';
-  entry.innerHTML = `<strong>Exhaust #${idx + 1}</strong>` + renderFields(step.fields, secId, idx);
+  entry.innerHTML = `<strong>#${idx + 1}</strong>` + renderFields(step.fields, secId, idx);
   container.appendChild(entry);
 };
 
@@ -432,7 +412,14 @@ function showStep(idx) {
   if (el) el.classList.add('active');
   document.getElementById('btn-prev').disabled = idx === 0;
   const isLast = idx === STEPS.length - 1;
-  document.getElementById('btn-next').textContent = isLast ? '🔧 Generate' : 'Next →';
+  const nextBtn = document.getElementById('btn-next');
+  if (isLast) {
+    nextBtn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg> Generate`;
+    nextBtn.classList.add('generate');
+  } else {
+    nextBtn.innerHTML = `Next <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>`;
+    nextBtn.classList.remove('generate');
+  }
   document.getElementById('step-indicator').textContent = `${idx + 1} / ${STEPS.length}`;
 }
 
@@ -450,7 +437,6 @@ function generateOutput() {
   const lines = [];
   const L = (t = '') => lines.push(t);
   const SEP = ';===================================================================================================================';
-  const DSEP = ';--------------------------------------------------------------------------------------------------------------------';
 
   // ── Header + Includes ──
   L('; Done By Pod\'s Mods of RealiSimHQ');
@@ -560,7 +546,7 @@ function generateOutput() {
   // ── Underside ──
   if (state.underside_dark?.enabled) {
     L(SEP);
-    L('; Underside of car (Dark areas)');
+    L('; Wheel Well / Under Carriage Shadows');
     L(SEP);
     L('[SHADER_REPLACEMENT_...]');
     L(`MATERIALS = ${state.underside_dark.values.underside_mats}`);
@@ -739,55 +725,6 @@ function generateOutput() {
     L();
   }
 
-  // ── Includes before rims ──
-  L('[INCLUDE: common/materials_interior.ini]');
-  L('[INCLUDE: common/custom_rims.ini]');
-  L();
-
-  // ── Custom Rims ──
-  if (state.custom_rims?.enabled) {
-    const v = state.custom_rims.values;
-    L(SEP);
-    L('; Custom Rims');
-    L(SEP);
-    L('[ReplaceRims]');
-    L(`File = ${v.rim_file}`);
-    L(`OriginalRims = ${v.rim_front_orig}`);
-    L(`Model = ${v.rim_front_kn5} , ${v.rim_front_radius}, ${v.rim_front_width}`);
-    L(`Offset = ${v.rim_front_offset}`);
-    L('FrontOnly=1');
-    L();
-    L('[ReplaceRims]');
-    L(`File = ${v.rim_file}`);
-    L(`OriginalRims = ${v.rim_rear_orig}`);
-    L(`Model = ${v.rim_rear_kn5} , ${v.rim_rear_radius}, ${v.rim_rear_width}`);
-    L(`Offset = ${v.rim_rear_offset}`);
-    L('RearOnly=1');
-    L();
-  }
-
-  // ── Tire Replacement ──
-  if (state.tire_replace?.enabled) {
-    const v = state.tire_replace.values;
-    L(SEP);
-    L('; Tire Replacement');
-    L(SEP);
-    L('[ReplaceRims]');
-    L(`File = ${v.tire_file}`);
-    if (v.tire_front_orig) L(`OriginalRims = ${v.tire_front_orig}`);
-    L(`Model = ${v.tire_front_kn5} , ${v.tire_front_radius}, ${v.tire_front_width}`);
-    L(`Offset = ${v.tire_front_offset}`);
-    L('FrontOnly=1');
-    L();
-    L('[ReplaceRims]');
-    L(`File = ${v.tire_file}`);
-    if (v.tire_rear_orig) L(`OriginalRims = ${v.tire_rear_orig}`);
-    L(`Model = ${v.tire_rear_kn5} , ${v.tire_rear_radius}, ${v.tire_rear_width}`);
-    L(`Offset = ${v.tire_rear_offset}`);
-    L('RearOnly=1');
-    L();
-  }
-
   // ── Underglow ──
   if (state.underglow_lights?.enabled) {
     const v = state.underglow_lights.values;
@@ -829,11 +766,11 @@ function generateOutput() {
     });
   }
 
-  // ── Emissive ──
+  // ── Emissive / Hide Parts ──
   if (state.emissive_extra?.enabled) {
     const v = state.emissive_extra.values;
     L(SEP);
-    L('; Emissive Extras');
+    L('; Hidden Parts');
     L(SEP);
     L('[EMISSIVE_EXTRA_F_...]');
     L(`NAME = ${v.emissive_name}`);
@@ -848,8 +785,13 @@ function generateOutput() {
     L();
   }
 
+  // ── Includes before rims ──
+  L('[INCLUDE: common/materials_interior.ini]');
+  L('[INCLUDE: common/custom_rims.ini]');
+  L();
+
   // ══════════════════════════════════════════════════════════════════════
-  // STATIC DEFAULTS — Always appended below
+  // STATIC DEFAULTS — Always appended
   // ══════════════════════════════════════════════════════════════════════
   L(SEP);
   L(';---------------------------------------------Rarely Changed--------------------------------------------------------');
@@ -942,7 +884,6 @@ function generateOutput() {
   L('MATERIALS = 21 - Default, Tyre.001, Tyre_Stock, Tyre_Pro, Tyre_Thicc');
   L('SHADER = ksTyresFX');
   L();
-  // Compounds 0-2: Federal
   for (let i = 0; i <= 2; i++) {
     L(`[TYRES_FX_CUSTOMTEXTURE_${i}]`);
     L('TXDIFFUSE = /../../parts/tyre/Federal_595RS_white_letter/tyre1.dds');
@@ -951,7 +892,6 @@ function generateOutput() {
     L('TXNORMALBLUR = /../../parts/tyre/Federal_595RS_white_letter/tyre1_NM.dds');
     L();
   }
-  // Compounds 3-5: Kenda
   for (let i = 3; i <= 5; i++) {
     L(`[TYRES_FX_CUSTOMTEXTURE_${i}]`);
     L('TXDIFFUSE = /../../parts/tyre/KendaKR20A/tyre.dds');
@@ -960,7 +900,6 @@ function generateOutput() {
     L('TXNORMALBLUR = /../../parts/tyre/KendaKR20A/tyre_nm.dds');
     L();
   }
-  // Compound 6: Armstrong
   L('[TYRES_FX_CUSTOMTEXTURE_6]');
   L('TXDIFFUSE = /../../parts/tyre/Armstrong_BluTracHP/tyre.dds');
   L('TXBLUR = /../../parts/tyre/Armstrong_BluTracHP/tyre.dds');
@@ -968,7 +907,6 @@ function generateOutput() {
   L('TXNORMAL = /../../parts/tyre/Armstrong_BluTracHP/tyre_nm.dds');
   L('TXNORMALBLUR = /../../parts/tyre/Armstrong_BluTracHP/tyre_nm.dds');
   L();
-  // Compound 7: Accelera
   L('[TYRES_FX_CUSTOMTEXTURE_7]');
   L('TXDIFFUSE = /../../parts/tyre/accelera_651/tyre.dds');
   L('TXBLUR = /../../parts/tyre/accelera_651/tyre_blur.dds');
@@ -1276,15 +1214,16 @@ function generateOutput() {
   document.getElementById('output-code').textContent = output;
   document.getElementById('wizard').style.display = 'none';
   document.getElementById('wizard-nav').style.display = 'none';
-  document.getElementById('output-section').style.display = 'block';
+  document.getElementById('output-section').classList.remove('hidden');
 }
 
 function copyOutput() {
   const text = document.getElementById('output-code').textContent;
   navigator.clipboard.writeText(text).then(() => {
     const btn = document.getElementById('btn-copy');
-    btn.textContent = '✅ Copied!';
-    setTimeout(() => btn.textContent = '📋 Copy to Clipboard', 1500);
+    const orig = btn.innerHTML;
+    btn.innerHTML = '✅ Copied!';
+    setTimeout(() => btn.innerHTML = orig, 1500);
   });
 }
 
@@ -1298,7 +1237,7 @@ function downloadOutput() {
 }
 
 function backToWizard() {
-  document.getElementById('output-section').style.display = 'none';
+  document.getElementById('output-section').classList.add('hidden');
   document.getElementById('wizard').style.display = '';
   document.getElementById('wizard-nav').style.display = '';
 }
