@@ -215,7 +215,8 @@ const FEATURES = [
         { value: 'gold', label: 'Gold' },
         { value: 'white', label: 'White' },
       ], default: 'custom' },
-      { id: 'ug_color_from', label: 'Color From (R, G, B)', default: '0, 70, 20', hint: 'Used when Preset is Custom' },
+      { id: 'ug_color_from', label: 'Color From 1 (R, G, B)', default: '0, 70, 20', hint: 'Used when Preset is Custom' },
+      { id: 'ug_color_from2', label: 'Color From 2 (R, G, B)', default: '', hint: 'Optional second color — leave blank to use one color' },
       { id: 'ug_color_to', label: 'Color To (R, G, B)', default: '70, 0, 50', hint: 'Used when Preset is Custom' },
       { id: 'ug_range', label: 'Range', default: '2.0', type: 'number', step: '0.1' },
       { id: 'ug_spot', label: 'Spot', default: '170', type: 'number', step: '10' },
@@ -324,7 +325,8 @@ function renderFillStep() {
   html += `<h2>${feat.icon} ${feat.label}</h2>`;
   html += `<p class="step-desc">${feat.desc}</p>`;
   html += `</div>`;
-  html += `<div class="fill-card">`;
+  const isUnderglow = feat.id === 'underglow_lights';
+  html += `<div class="fill-card${isUnderglow ? ' underglow-preview' : ''}" id="fill-card-${feat.id}">`;
   html += renderFields(feat.fields, feat.id, 0);
   if (feat.repeater) {
     html += `<div id="repeater-${feat.id}"></div>`;
@@ -333,6 +335,76 @@ function renderFillStep() {
   html += `</div>`;
   wizard.innerHTML = html;
   updateNav();
+  if (isUnderglow) startGlowPreview();
+}
+
+let glowInterval = null;
+
+function startGlowPreview() {
+  if (glowInterval) clearInterval(glowInterval);
+  updateGlowPreview();
+  // Animate pulse when blinking is on
+  let phase = 0;
+  glowInterval = setInterval(() => {
+    phase = (phase + 1) % 120;
+    updateGlowPreview(phase);
+  }, 50);
+}
+
+function getUgColors() {
+  const ug = values.underglow_lights;
+  const preset = ug.ug_preset || 'custom';
+  const ugPresets = {
+    cyan: { from: '0, 200, 220', from2: '', to: '0, 150, 200' },
+    purple: { from: '80, 0, 160', from2: '', to: '160, 0, 200' },
+    red: { from: '200, 0, 0', from2: '', to: '255, 30, 0' },
+    green: { from: '0, 200, 30', from2: '', to: '0, 150, 80' },
+    gold: { from: '200, 160, 20', from2: '', to: '220, 180, 40' },
+    white: { from: '200, 200, 220', from2: '', to: '220, 220, 240' },
+  };
+  if (preset !== 'custom') {
+    const p = ugPresets[preset];
+    return { from: p.from, from2: p.from2, to: p.to };
+  }
+  return { from: ug.ug_color_from || '0,70,20', from2: ug.ug_color_from2 || '', to: ug.ug_color_to || '70,0,50' };
+}
+
+function parseRGB(str) {
+  const parts = (str || '0,0,0').split(',').map(s => Math.min(255, Math.max(0, parseInt(s.trim()) || 0)));
+  while (parts.length < 3) parts.push(0);
+  return parts;
+}
+
+function updateGlowPreview(phase) {
+  const card = document.getElementById('fill-card-underglow_lights');
+  if (!card) { if (glowInterval) { clearInterval(glowInterval); glowInterval = null; } return; }
+
+  const { from, from2, to } = getUgColors();
+  const blinking = values.underglow_lights.ug_blinking === '1';
+  const c1 = parseRGB(from);
+  const c2 = parseRGB(to);
+  const c1b = from2 ? parseRGB(from2) : c1;
+
+  // Blend based on phase
+  const t = phase !== undefined ? (Math.sin(phase * Math.PI / 60) * 0.5 + 0.5) : 0.5;
+  const opacity = blinking ? (Math.sin((phase || 0) * Math.PI / 60) * 0.3 + 0.5) : 0.5;
+
+  // Interpolate from↔to for the main glow
+  const r = Math.round(c1[0] + (c2[0] - c1[0]) * t);
+  const g = Math.round(c1[1] + (c2[1] - c1[1]) * t);
+  const b = Math.round(c1[2] + (c2[2] - c1[2]) * t);
+
+  // Second color for gradient if from2 is set
+  const r2 = Math.round(c1b[0] + (c2[0] - c1b[0]) * t);
+  const g2 = Math.round(c1b[1] + (c2[1] - c1b[1]) * t);
+  const b2 = Math.round(c1b[2] + (c2[2] - c1b[2]) * t);
+
+  const glowColor1 = `rgba(${r}, ${g}, ${b}, ${opacity.toFixed(2)})`;
+  const glowColor2 = `rgba(${r2}, ${g2}, ${b2}, ${opacity.toFixed(2)})`;
+
+  card.style.borderColor = `rgb(${r}, ${g}, ${b})`;
+  card.style.boxShadow = `0 0 30px ${glowColor1}, inset 0 0 20px rgba(${r}, ${g}, ${b}, 0.08), 0 0 60px ${glowColor2}`;
+  card.style.background = `linear-gradient(135deg, rgba(${r}, ${g}, ${b}, 0.06) 0%, var(--bg-card) 40%, rgba(${r2}, ${g2}, ${b2}, 0.06) 100%)`;
 }
 
 function renderFields(fields, featureId, repeatIdx) {
@@ -375,6 +447,7 @@ window.updateVal = function(featId, fid, val, repeatIdx) {
   } else {
     values[featId][fid] = val;
   }
+  if (featId === 'underglow_lights') updateGlowPreview();
 };
 
 window.pasteInto = async function(featId, fid, repeatIdx) {
@@ -718,17 +791,24 @@ function generateOutput() {
     };
     const ugPreset = ug.ug_preset || 'custom';
     const colorFrom = ugPreset === 'custom' ? ug.ug_color_from : ugPresets[ugPreset].from;
+    const colorFrom2 = ugPreset === 'custom' ? (ug.ug_color_from2 || '') : '';
     const colorTo = ugPreset === 'custom' ? ug.ug_color_to : ugPresets[ugPreset].to;
 
     L(SEP); L('; Underglow Lights'); L(SEP);
-    [{n:'1',f:'-0.7, 0.20, -1.8',t:'0.7, 0.20, -1.8',c:'0.7'},
-     {n:'2',f:'0.8, 0.20, 0.8',t:'0.8, 0.20, -0.8',c:'0.8'},
-     {n:'3',f:'-0.8, 0.20, 0.8',t:'-0.8, 0.20, -0.8',c:'0.8'},
-     {n:'4',f:'-0.7, 0.20, 2.0',t:'0.7, 0.20, 2.0',c:'0.8'}].forEach(s => {
+    const strips = [
+      {n:'1',f:'-0.7, 0.20, -1.8',t:'0.7, 0.20, -1.8',c:'0.7', side:'front'},
+      {n:'2',f:'0.8, 0.20, 0.8',t:'0.8, 0.20, -0.8',c:'0.8', side:'right'},
+      {n:'3',f:'-0.8, 0.20, 0.8',t:'-0.8, 0.20, -0.8',c:'0.8', side:'left'},
+      {n:'4',f:'-0.7, 0.20, 2.0',t:'0.7, 0.20, 2.0',c:'0.8', side:'rear'},
+    ];
+    strips.forEach(s => {
+      // If user provided a 2nd from color, alternate sides
+      const useFrom2 = colorFrom2 && (s.side === 'right' || s.side === 'rear');
+      const cFrom = useFrom2 ? colorFrom2 : colorFrom;
       L(`[LIGHT_EXTRA_${s.n}]`);
       L(`LINE_FROM=${s.f}`); L(`LINE_TO=${s.t}`);
       L('BIND_TO_HEADLIGHTS=1');
-      L(`COLOR_FROM=${colorFrom}`); L(`COLOR_TO=${colorTo}`);
+      L(`COLOR_FROM=${cFrom}`); L(`COLOR_TO=${colorTo}`);
       L(`DIFFUSE_CONCENTRATION=${s.c}`);
       L('FADE_AT=150'); L('FADE_SMOOTH=8');
       L(`RANGE=${ug.ug_range}`); L('RANGE_GRADIENT_OFFSET=0.1');
