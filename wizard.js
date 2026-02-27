@@ -206,6 +206,12 @@ const FEATURES = [
     desc: 'LED strips under the car',
     icon: '💡',
     fields: [
+      { id: 'ug_width', label: 'Car Width (meters)', default: '1.4', type: 'number', step: '0.05',
+        hint: 'CM Showroom → Update Ambient Shadows → check "Highlight size" → read Width. MMB to refresh after sliding.' },
+      { id: 'ug_length', label: 'Car Length (meters)', default: '3.8', type: 'number', step: '0.05',
+        hint: 'Same panel → read Length. These set where the 4 light strips sit around the car.' },
+      { id: 'ug_height', label: 'Light Height (Y)', default: '0.20', type: 'number', step: '0.01',
+        hint: 'Distance from ground. 0.20 = typical ride height.' },
       { id: 'ug_preset', label: 'Color Preset', type: 'choice', choices: [
         { value: 'custom', label: 'Custom' },
         { value: 'cyan', label: 'Cyan' },
@@ -877,12 +883,25 @@ function generateOutput() {
     const colorFrom2 = ugPreset === 'custom' ? (ug.ug_color_from2 || '') : '';
     const colorTo = ugPreset === 'custom' ? ug.ug_color_to : ugPresets[ugPreset].to;
 
+    // Calculate strip positions from car dimensions
+    const carW = parseFloat(ug.ug_width) || 1.4;
+    const carL = parseFloat(ug.ug_length) || 3.8;
+    const carY = parseFloat(ug.ug_height) || 0.20;
+    const halfW = (carW / 2).toFixed(1);        // inner edge for front/rear strips
+    const sideX = (carW / 2 + 0.1).toFixed(1);  // outer edge for side strips
+    const frontZ = (-(carL / 2) + 0.1).toFixed(1); // front strip Z
+    const rearZ = (carL / 2).toFixed(1);            // rear strip Z
+    const sideZf = (carL / 2 - 1.0).toFixed(1);    // side strips run from +Z...
+    const sideZr = (-(carL / 2) + 1.0).toFixed(1); // ...to -Z (inset a bit from bumpers)
+    const y = carY.toFixed(2);
+
     L(SEP); L('; Underglow Lights'); L(SEP);
+    L(`; Calculated from car dimensions: ${carW}m wide × ${carL}m long, height ${y}`);
     const strips = [
-      {n:'1',f:'-0.7, 0.20, -1.8',t:'0.7, 0.20, -1.8',c:'0.7', side:'front'},
-      {n:'2',f:'0.8, 0.20, 0.8',t:'0.8, 0.20, -0.8',c:'0.8', side:'right'},
-      {n:'3',f:'-0.8, 0.20, 0.8',t:'-0.8, 0.20, -0.8',c:'0.8', side:'left'},
-      {n:'4',f:'-0.7, 0.20, 2.0',t:'0.7, 0.20, 2.0',c:'0.8', side:'rear'},
+      {n:'1',f:`-${halfW}, ${y}, ${frontZ}`,t:`${halfW}, ${y}, ${frontZ}`,c:'0.7', side:'front'},
+      {n:'2',f:`${sideX}, ${y}, ${sideZf}`,t:`${sideX}, ${y}, ${sideZr}`,c:'0.8', side:'right'},
+      {n:'3',f:`-${sideX}, ${y}, ${sideZf}`,t:`-${sideX}, ${y}, ${sideZr}`,c:'0.8', side:'left'},
+      {n:'4',f:`-${halfW}, ${y}, ${rearZ}`,t:`${halfW}, ${y}, ${rearZ}`,c:'0.8', side:'rear'},
     ];
     strips.forEach(s => {
       // If user provided a 2nd from color, alternate sides
