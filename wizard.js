@@ -280,7 +280,7 @@ function buildWizard() {
     div.className = 'step';
     div.id = `step-${si}`;
 
-    let html = `<h2>${step.title}</h2><p class="step-desc">${step.desc}</p>`;
+    let html = `<div class="step-header"><h2>${step.title}</h2><p class="step-desc">${step.desc}</p></div>`;
 
     step.sections.forEach(sec => {
       state[sec.id] = { enabled: false, values: {}, repeats: [] };
@@ -414,13 +414,15 @@ function showStep(idx) {
   const isLast = idx === STEPS.length - 1;
   const nextBtn = document.getElementById('btn-next');
   if (isLast) {
-    nextBtn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg> Generate`;
-    nextBtn.classList.add('generate');
+    nextBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg> Generate`;
+    nextBtn.className = 'btn-glow gold';
   } else {
     nextBtn.innerHTML = `Next <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>`;
-    nextBtn.classList.remove('generate');
+    nextBtn.className = 'btn-glow cyan';
   }
-  document.getElementById('step-indicator').textContent = `${idx + 1} / ${STEPS.length}`;
+  document.getElementById('step-indicator').textContent = `Step ${idx + 1} of ${STEPS.length}`;
+  const pct = ((idx + 1) / STEPS.length) * 100;
+  document.getElementById('step-progress').style.setProperty('--progress', pct + '%');
 }
 
 function navigate(dir) {
@@ -1214,7 +1216,7 @@ function generateOutput() {
   document.getElementById('output-code').textContent = output;
   document.getElementById('wizard').style.display = 'none';
   document.getElementById('wizard-nav').style.display = 'none';
-  document.getElementById('output-section').classList.remove('hidden');
+  document.getElementById('output-section').style.display = 'block';
 }
 
 function copyOutput() {
@@ -1237,7 +1239,7 @@ function downloadOutput() {
 }
 
 function backToWizard() {
-  document.getElementById('output-section').classList.add('hidden');
+  document.getElementById('output-section').style.display = 'none';
   document.getElementById('wizard').style.display = '';
   document.getElementById('wizard-nav').style.display = '';
 }
