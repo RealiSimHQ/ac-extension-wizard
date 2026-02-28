@@ -717,6 +717,11 @@ input[type="number"]::-webkit-inner-spin-button { opacity: 1; }
 }
 
 /* ─── Import Modal ─── */
+#import-modal {
+  position: fixed; inset: 0; z-index: 2000;
+  display: flex; align-items: center; justify-content: center;
+  animation: fadeSlideUp 0.3s ease both;
+}
 .import-card {
   max-width: 520px;
 }
