@@ -261,6 +261,13 @@ let fillOrder = [];
 let fillIdx = 0;
 const values = {}; // { featureId: { fieldId: val } }
 const repeats = {}; // { featureId: [ { fieldId: val }, ... ] }
+let originalExtConfig = ''; // imported ext_config.ini content
+
+function isPatreon() {
+  const auth = sessionStorage.getItem('patreon_authorized');
+  const until = parseInt(sessionStorage.getItem('patreon_until') || '0');
+  return auth === 'true' && Date.now() < until;
+}
 
 FEATURES.forEach(f => {
   values[f.id] = {};
@@ -339,6 +346,27 @@ function renderFillStep() {
     html += `<button class="repeater-add" onclick="addRepeat('${feat.id}')">+ Add Another</button>`;
   }
   html += `</div>`;
+
+  // Copy Section button (Patreon) or ad (free users)
+  if (isPatreon()) {
+    html += `<div class="section-copy-wrap">
+      <button class="btn-glow cyan section-copy-btn" onclick="copySectionToClipboard('${feat.id}')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+        Copy This Section
+      </button>
+    </div>`;
+  } else {
+    html += `<div class="section-copy-wrap patreon-ad">
+      <a href="https://www.patreon.com/c/u80119694" target="_blank" class="patreon-unlock-link">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="vertical-align:-4px;margin-right:6px;">
+          <circle cx="14" cy="9" r="7" fill="#FF424D"/>
+          <rect x="1" y="1" width="4" height="22" rx="1" fill="#052D49"/>
+        </svg>
+        Unlock per-section copy on Patreon
+      </a>
+    </div>`;
+  }
+
   wizard.innerHTML = html;
   updateNav();
   if (isUnderglow) startGlowPreview();
@@ -554,6 +582,20 @@ window.closeColorPicker = function() {
   if (el) el.remove();
 };
 
+window.copySectionToClipboard = function(featureId) {
+  const sectionLines = buildSectionLines(featureId);
+  const text = sectionLines.join('\n');
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.section-copy-btn');
+    if (btn) {
+      const orig = btn.innerHTML;
+      btn.innerHTML = '✅ Copied!';
+      btn.style.borderColor = 'var(--success)';
+      setTimeout(() => { btn.innerHTML = orig; btn.style.borderColor = ''; }, 1500);
+    }
+  });
+};
+
 window.addRepeat = function(featId) {
   const feat = FEATURES.find(f => f.id === featId);
   if (!feat) return;
@@ -603,7 +645,8 @@ function updateNav() {
 
 function goNext() {
   if (phase === 'checklist') {
-      startFillIn();
+      showExtConfigImportModal();
+      return;
   } else if (phase === 'fillin') {
     if (fillIdx < fillOrder.length - 1) {
       fillIdx++;
@@ -623,6 +666,372 @@ function goPrev() {
       renderChecklist();
     }
   }
+}
+
+// ─── Ext_Config Import Modal ───
+function showExtConfigImportModal() {
+  const modal = document.createElement('div');
+  modal.id = 'import-modal';
+  modal.innerHTML = `
+    <div class="modal-backdrop" onclick="skipImport()"></div>
+    <div class="modal-card import-card">
+      <h3 class="modal-title">📁 Existing Extension Config?</h3>
+      <p class="modal-sub">Does your car already have an <code>extension</code> folder with an <code>ext_config.ini</code>?</p>
+      <div class="import-choices">
+        <button class="btn-glow cyan" onclick="showImportDropZone()">Yes — I'll upload it</button>
+        <button class="btn-glow ghost" onclick="skipImport()">No — Start fresh</button>
+      </div>
+      <div id="import-dropzone" style="display:none;">
+        <div class="dropzone" id="dropzone-area">
+          <div class="dropzone-icon">📄</div>
+          <p>Drag & drop your <strong>ext_config.ini</strong> here</p>
+          <p class="dropzone-hint">or click to browse</p>
+          <input type="file" id="import-file-input" accept=".ini,.txt" style="display:none;" onchange="handleImportFile(this.files)">
+        </div>
+        <div id="import-status" style="display:none;"></div>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+}
+
+window.showImportDropZone = function() {
+  document.querySelector('.import-choices').style.display = 'none';
+  const dropzone = document.getElementById('import-dropzone');
+  dropzone.style.display = 'block';
+
+  const area = document.getElementById('dropzone-area');
+  area.addEventListener('click', () => document.getElementById('import-file-input').click());
+
+  area.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    area.classList.add('dragover');
+  });
+  area.addEventListener('dragleave', () => area.classList.remove('dragover'));
+  area.addEventListener('drop', (e) => {
+    e.preventDefault();
+    area.classList.remove('dragover');
+    // Handle both file drops and folder drops
+    const items = e.dataTransfer.items;
+    if (items) {
+      for (let i = 0; i < items.length; i++) {
+        const entry = items[i].webkitGetAsEntry ? items[i].webkitGetAsEntry() : null;
+        if (entry && entry.isDirectory) {
+          // Search directory for ext_config.ini
+          searchDirectoryForIni(entry);
+          return;
+        }
+      }
+    }
+    // Fallback: treat as file(s)
+    handleImportFile(e.dataTransfer.files);
+  });
+};
+
+function searchDirectoryForIni(dirEntry) {
+  const reader = dirEntry.createReader();
+  reader.readEntries((entries) => {
+    for (const entry of entries) {
+      if (entry.isFile && entry.name.toLowerCase() === 'ext_config.ini') {
+        entry.file((file) => handleImportFile([file]));
+        return;
+      }
+    }
+    // Not found at top level, check subdirectories
+    for (const entry of entries) {
+      if (entry.isDirectory && entry.name.toLowerCase() === 'extension') {
+        searchDirectoryForIni(entry);
+        return;
+      }
+    }
+    // Not found anywhere
+    const status = document.getElementById('import-status');
+    status.style.display = 'block';
+    status.innerHTML = '<p style="color:#ff6b6b;">⚠️ No ext_config.ini found in that folder. Try dropping the file directly.</p>';
+  });
+}
+
+window.handleImportFile = function(files) {
+  if (!files || files.length === 0) return;
+  const file = files[0];
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    originalExtConfig = e.target.result;
+    const status = document.getElementById('import-status');
+    status.style.display = 'block';
+    const lineCount = originalExtConfig.split('\n').length;
+    status.innerHTML = `<p style="color:#22c55e;">✅ Loaded <strong>${file.name}</strong> (${lineCount} lines)</p>
+      <button class="btn-glow cyan" onclick="closeImportAndContinue()" style="margin-top:12px;">Continue →</button>`;
+  };
+  reader.readAsText(file);
+};
+
+window.skipImport = function() {
+  originalExtConfig = '';
+  const modal = document.getElementById('import-modal');
+  if (modal) modal.remove();
+  startFillIn();
+};
+
+window.closeImportAndContinue = function() {
+  const modal = document.getElementById('import-modal');
+  if (modal) modal.remove();
+  startFillIn();
+};
+
+// ─── Per-Section Builder ───
+function buildSectionLines(featureId) {
+  const lines = [];
+  const L = (t = '') => lines.push(t);
+  const SEP = ';===================================================================================================================';
+  const v = id => values[id];
+
+  switch (featureId) {
+    case 'audio_pitch':
+      L(SEP); L('; ~ Audio ~'); L(SEP);
+      L('[AUDIO_PITCH]');
+      L(`ENGINE_EXT=${v('audio_pitch').engine_ext_pitch}`);
+      L(`ENGINE_INT=${v('audio_pitch').engine_int_pitch}`);
+      L(`SKID_EXT = ${v('audio_pitch').skid_ext_pitch}`);
+      L(`SKID_INT = ${v('audio_pitch').skid_int_pitch}`);
+      break;
+    case 'audio_volume':
+      if (!checked.has('audio_pitch')) { L(SEP); L('; ~ Audio ~'); L(SEP); }
+      L('[AUDIO_VOLUME]');
+      ['ENGINE_EXT:vol_engine_ext','ENGINE_INT:vol_engine_int','GEAR_EXT:vol_gear_ext','GEAR_INT:vol_gear_int',
+       'BODYWORK:vol_bodywork','WIND:vol_wind','DIRT:vol_dirt','DOWN_SHIFT:vol_down_shift','HORN:vol_horn',
+       'GEAR_GRIND:vol_gear_grind','BACKFIRE_EXT:vol_backfire_ext','BACKFIRE_INT:vol_backfire_int',
+       'TRANSMISSION:vol_transmission','LIMITER:vol_limiter','TURBO:vol_turbo',
+       'SKID_EXT:vol_skid_ext','SKID_INT:vol_skid_int'].forEach(p => {
+        const [k, id] = p.split(':');
+        L(`${k} = ${v('audio_volume')[id]}`);
+      });
+      break;
+    case 'ext_glass':
+      L(SEP); L('; Exterior Glass'); L(SEP);
+      L('[SHADER_REPLACEMENT_...]');
+      L(`MATERIALS = ${v('ext_glass').ext_glass_mat}`);
+      L('PROP_... = extColoredReflection, 0.9');
+      L('PROP_... = extColoredReflectionNorm, 0.8');
+      L('PROP_... = extColoredBaseReflection, 0');
+      L('PROP_... = fresnelEXP, 5');
+      L('PROP_... = fresnelMaxLevel, 1');
+      L('PROP_... = fresnelC, 0.6');
+      L('PROP_... = ksAmbient, 0.1');
+      L('PROP_... = ksDiffuse, 0.1');
+      L('PROP_... = isAdditive, 0');
+      L('PROP_... = ksSpecular, 1');
+      L('PROP_... = ksSpecularEXP, 200');
+      L('PROP_... = sunSpecular, 0.5');
+      L('PROP_... = sunSpecularEXP, 20');
+      L('PROP_... = extExtraSharpLocalReflections, -1');
+      L('PROP_... = extNormalizeAO, 1');
+      L('RESOURCE_0 = txDiffuse');
+      L('RESOURCE_FILE_0 = /../../parts/textures/glass.dds');
+      L('RESOURCE_1 = txNormal');
+      L('RESOURCE_FILE_1 = /../../parts/textures/Damage/DAMAGE_GLASS.dds');
+      break;
+    case 'int_glass':
+      L(SEP); L('; Interior Glass'); L(SEP);
+      L('[SHADER_REPLACEMENT_100]');
+      L(`MATERIALS = ${v('int_glass').int_glass_mat}`);
+      L('SHADER = ksWindscreen');
+      break;
+    case 'shaking_exhaust': {
+      L(SEP); L('; SHAKING EXHAUST'); L(SEP);
+      const all = [v('shaking_exhaust'), ...repeats.shaking_exhaust];
+      all.forEach(ex => {
+        L('[SHAKING_EXHAUST_...]');
+        L(`MESHES = ${ex.exhaust_mesh || ''}`);
+        L(`POINT_0 = ${ex.exhaust_point || '1, 2, 3'}`);
+        L(`POINT_0_RADIUS = ${ex.exhaust_radius || '1'}`);
+        L(`POINT_0_EXP = ${ex.exhaust_exp || '1'}`);
+        L(`POINT_0_SCALE = ${ex.exhaust_scale || '0.35, 0.35, 0.3'}`);
+        L();
+      });
+      break;
+    }
+    case 'underside_dark':
+      L(SEP); L('; Wheel Well / Under Carriage Shadows'); L(SEP);
+      L('[SHADER_REPLACEMENT_...]');
+      L(`MATERIALS = ${v('underside_dark').underside_mats}`);
+      L('PROP_... = ksAmbient, 0.01');
+      L('PROP_... = ksDiffuse, 0.01');
+      L('DOUBLE_FACE_SHADOW_BIASED = 1');
+      break;
+    case 'smoke_collider':
+      L(SEP); L('; Smoke Collider'); L(SEP);
+      L('[COLLIDER_0]');
+      L(`MESHES= ${v('smoke_collider').collider_mesh}`);
+      L('POSITION_OFFSET=0,0,0');
+      L('RADIUS=0.1');
+      break;
+    case 'carpaint_mat':
+      L(SEP); L('; Carpaint'); L(SEP);
+      L('[INCLUDE: common/materials_carpaint.ini]');
+      L(`CarPaintMaterial = ${v('carpaint_mat').carpaint_material}`);
+      L('CarPaintVersionAware = 4');
+      L('DisableDev = 1');
+      L('COLLIDER_1_SPARKS_AS=TITANIUM, SKIDPAD');
+      break;
+    case 'damage_tex': {
+      const dir = v('damage_tex').damage_ao_dir || 'V';
+      L(SEP); L('; Car Damage Textures'); L(SEP);
+      L('[SHADER_REPLACEMENT_...]');
+      L(`MATERIALS = ${v('damage_tex').damage_materials}`);
+      L('SHADER = ksPerPixelMultiMap_damage_dirt');
+      'ksAmbient,0.45|ksDiffuse,0.5|ksSpecular,0.6|ksSpecularEXP,120|KsAlphaRef,1|fresnelC,0.07|fresnelEXP,3.5|fresnelMaxLevel,0.6|nmObjectSpace,0|isAdditive,2|useDetail,1|detailUVMultiplier,40|shadowBiasMult,0|damageZones,0,0,0,0|dirt,0.00|sunSpecular,12|sunSpecularEXP,2000|extNormalizeAO,1'.split('|').forEach(p => {
+        const [k, ...vv] = p.split(',');
+        L(`PROP_... = ${k}, ${vv.join(',')}`);
+      });
+      L('RESOURCE_0 = txDiffuse'); L('RESOURCE_FILE_0 = carpaint.dds');
+      L('RESOURCE_1 = txNormal'); L('RESOURCE_FILE_1 = carpaint_nm.dds');
+      L('RESOURCE_2 = txMaps'); L('RESOURCE_FILE_2 = carpaint_maps.dds');
+      L('RESOURCE_3 = txDetail'); L('RESOURCE_FILE_3 = metal_detail.dds');
+      L('RESOURCE_4 = txDamage'); L(`RESOURCE_FILE_4 = /../../parts/textures/Damage/carpaint_Damage_${dir}.dds`);
+      L('RESOURCE_5 = txDust'); L(`RESOURCE_FILE_5 = /../../parts/textures/Damage/carpaint_Dust_${dir}.dds`);
+      L('RESOURCE_6 = txDamageMask'); L(`RESOURCE_FILE_6 = /../../parts/textures/Damage/carpaint_Damage_Maps_${dir}.dds`);
+      break;
+    }
+    case 'deforming_hood':
+      L(SEP); L('; DEFORMING HOOD'); L(SEP);
+      L('[DEFORMING_HOOD]');
+      L(`NAME=${v('deforming_hood').hood_name || ''}`);
+      L('OFFSET_Y_MIDDLE=0.03'); L('OFFSET_Y_END=-0.06'); L('OFFSET_Z_END=0.02');
+      L('BULGING_EXTRA=0.05'); L('BULGING_EXPONENT=2.0');
+      L('NOISE_Y_AMPLITUDE=-0.4'); L('NOISE_Z_AMPLITUDE=0.4');
+      L('NOISE_Y_FREQENCY=-4.0'); L('NOISE_Z_FREQENCY=4.0');
+      L('Z_FACTOR=2.5');
+      break;
+    case 'gold_rims':
+      L(SEP); L('; Gold Rims'); L(SEP);
+      L('[Material_Aluminium_v2]');
+      L(`Materials= ${v('gold_rims').gold_rim_mats}`);
+      L('Metalness=0.5'); L('Reflectance=0.15'); L('BrightnessAdjustment=0.35');
+      L('DetailTexture=1'); L('DetailNormalTexture = common/pbr_metal.dds');
+      L('DetailNormalPBRSecondaryColor = 0.5, 0.45, 0.1, 0.3');
+      L('DetailScale=1'); L('DetailNormalBlend=1'); L('DetailNormalPBRSmoothnessGamma=0.8');
+      break;
+    case 'silver_rims':
+      L(SEP); L('; Silver Rims'); L(SEP);
+      L('[Material_Aluminium_v2]');
+      L(`Materials= ${v('silver_rims').silver_rim_mats}`);
+      L('Metalness=0.5'); L('Reflectance=0.15'); L('BrightnessAdjustment=0.35');
+      L('DetailTexture=1'); L('DetailNormalTexture = common/pbr_metal.dds');
+      L('DetailNormalPBRSecondaryColor = 0.5, 0.5, 0.5, 0.5');
+      L('DetailScale=1'); L('DetailNormalBlend=1'); L('DetailNormalPBRSmoothnessGamma=0.8');
+      break;
+    case 'painted_tex':
+      L(SEP); L('; Painted Texture'); L(SEP);
+      L('[SHADER_REPLACEMENT_...]');
+      L(`MATERIALS = ${v('painted_tex').painted_tex_mats}`);
+      'ksAmbient,0.45|ksDiffuse,0.5|ksSpecular,0.6|ksSpecularEXP,60|KsAlphaRef,0|fresnelC,0.07|fresnelEXP,3.5|fresnelMaxLevel,0.5|isAdditive,2|useDetail,1|detailUVMultiplier,120|shadowBiasMult,30|damageZones,0|dirt,0|sunSpecular,90|sunSpecularEXP,6500'.split('|').forEach(p => {
+        const [k, ...vv] = p.split(',');
+        L(`PROP_... = ${k}, ${vv.join(',')}`);
+      });
+      L('DOUBLE_FACE_SHADOW_BIASED = 1');
+      break;
+    case 'ext_chrome':
+      L(SEP); L('; Exterior Chrome'); L(SEP);
+      L('[Material_Metal_v2]');
+      L(`Materials= ${v('ext_chrome').chrome_mats}`);
+      L('BrightnessAdjustment = 0.4'); L('DetailScale = 1');
+      L('Metalness = 0.5'); L('Reflectance = 0.5'); L('LocalReflectionsSharpness = 0.1');
+      break;
+    case 'smoke_color': {
+      const presets = {
+        white: '255, 255, 255', blue: '30, 80, 200', pink: '200, 50, 120',
+        red: '200, 30, 30', yellow: '220, 180, 30', purple: '120, 30, 180',
+      };
+      const preset = v('smoke_color').smoke_preset || 'white';
+      const rgb = preset === 'custom' ? (v('smoke_color').smoke_custom_rgb || '43, 100, 130') : presets[preset];
+      L(SEP); L('; Tire Smoke Color'); L(SEP);
+      L(`; SMOKE_COLOR = ${rgb}`);
+      L('; (Applied in PARTICLES_FX static section)');
+      break;
+    }
+    case 'metallic_reflect':
+      L(SEP); L('; Metallic Paint Reflection'); L(SEP);
+      L('[SHADER_REPLACEMENT_...]');
+      L(`MATERIALS = ${v('metallic_reflect').metallic_material}`);
+      L('PROP_... = extColoredReflection, 0.9');
+      L('PROP_... = extColoredReflectionNorm, 0.8');
+      L('PROP_... = extColoredBaseReflection, 0.3');
+      break;
+    case 'semitrans_shadows':
+      L(SEP); L('; Semi-Transparent Shadows'); L(SEP);
+      L('[SHADER_REPLACEMENT_...]');
+      L(`MATERIALS = ${v('semitrans_shadows').semitrans_mats}`);
+      L('SEMITRANSPARENT_SHADOWS = TEXTURE');
+      break;
+    case 'doubleface_shadows':
+      L(SEP); L('; Double-Face Shadows'); L(SEP);
+      L('[SHADER_REPLACEMENT_...]');
+      L(`MATERIALS = ${v('doubleface_shadows').doubleface_mats}`);
+      L('DOUBLE_FACE_SHADOW_BIASED = 1');
+      break;
+    case 'underglow_lights': {
+      const ug = v('underglow_lights');
+      const blink = ug.ug_blinking === '1';
+      const ugPresets = {
+        cyan: { from: '0, 200, 220', to: '0, 150, 200' },
+        purple: { from: '80, 0, 160', to: '160, 0, 200' },
+        red: { from: '200, 0, 0', to: '255, 30, 0' },
+        green: { from: '0, 200, 30', to: '0, 150, 80' },
+        gold: { from: '200, 160, 20', to: '220, 180, 40' },
+        white: { from: '200, 200, 220', to: '220, 220, 240' },
+      };
+      const ugPreset = ug.ug_preset || 'custom';
+      const colorFrom = ugPreset === 'custom' ? ug.ug_color_from : ugPresets[ugPreset].from;
+      const colorFrom2 = ugPreset === 'custom' ? (ug.ug_color_from2 || '') : '';
+      const colorTo = ugPreset === 'custom' ? ug.ug_color_to : ugPresets[ugPreset].to;
+      const carW = parseFloat(ug.ug_width) || 1.4;
+      const carL = parseFloat(ug.ug_length) || 3.8;
+      const carY = parseFloat(ug.ug_height) || 0.20;
+      const frontZ = (-(carL / 2)).toFixed(2);
+      const rearZ = (carL / 2).toFixed(2);
+      const y = carY.toFixed(2);
+      L(SEP); L('; Underglow Lights'); L(SEP);
+      L(`; Calculated from car dimensions: ${carW}m wide × ${carL}m long, height ${y}`);
+      const spacing = carW / 3;
+      const strips = [
+        {n:'1', x: (-(carW / 2) + spacing * 0).toFixed(2), idx: 0},
+        {n:'2', x: (-(carW / 2) + spacing * 1).toFixed(2), idx: 1},
+        {n:'3', x: (-(carW / 2) + spacing * 2).toFixed(2), idx: 2},
+        {n:'4', x: (-(carW / 2) + spacing * 3).toFixed(2), idx: 3},
+      ];
+      strips.forEach(s => {
+        const useFrom2 = colorFrom2 && (s.idx % 2 === 1);
+        const cFrom = useFrom2 ? colorFrom2 : colorFrom;
+        L(`[LIGHT_EXTRA_${s.n}]`);
+        L(`LINE_FROM=${s.x}, ${y}, ${frontZ}`);
+        L(`LINE_TO=${s.x}, ${y}, ${rearZ}`);
+        L('BIND_TO_HEADLIGHTS=1');
+        L(`COLOR_FROM=${cFrom}`); L(`COLOR_TO=${colorTo}`);
+        L('DIFFUSE_CONCENTRATION=0.8');
+        L('FADE_AT=150'); L('FADE_SMOOTH=8');
+        L(`RANGE=${ug.ug_range}`); L('RANGE_GRADIENT_OFFSET=0.1');
+        L(`SPOT=${ug.ug_spot}`); L('SPOT_SHARPNESS=0.5');
+        L('SPECULAR_MULT=0'); L('DIRECTION=0,-1,0');
+        L('SELF_LIGHTNING=1'); L('EXTERIOR_ONLY=0'); L('INTERIOR_ONLY=0'); L('SIMULATE_HEATING=0');
+        if (blink) { L('BLINKING_PATTERN=(0=1|1=0|2=1|3=0|4=1|5=0|6=1|7=0)'); L('BLINKING_DURATION=8'); }
+        L();
+      });
+      break;
+    }
+    case 'emissive_extra': {
+      const em = v('emissive_extra');
+      L(SEP); L('; Hidden Parts'); L(SEP);
+      L('[EMISSIVE_EXTRA_F_...]');
+      L(`NAME = ${em.emissive_name}`);
+      L(`COLOR = ${em.emissive_color}`);
+      L('OFF_COLOR = 0, 0, 0'); L('LAG = 0.'); L('SIMULATE_HEATING = 0.');
+      L(`LOCATION = ${em.emissive_location || 'FRONT'}`);
+      L('ACT_AS_HEADLIGHTS = 0'); L('TOGGLE_VISIBILITY = 1'); L('TOGGLE_VISIBILITY_INVERSE = 0');
+      break;
+    }
+  }
+  return lines;
 }
 
 // ─── Output ───
@@ -651,295 +1060,25 @@ function generateOutput() {
   L('[INCLUDE: common/rain_tyres.ini]');
   L();
 
-  if (has('audio_pitch')) {
-    L(SEP); L('; ~ Audio ~'); L(SEP);
-    L('[AUDIO_PITCH]');
-    L(`ENGINE_EXT=${v('audio_pitch').engine_ext_pitch}`);
-    L(`ENGINE_INT=${v('audio_pitch').engine_int_pitch}`);
-    L(`SKID_EXT = ${v('audio_pitch').skid_ext_pitch}`);
-    L(`SKID_INT = ${v('audio_pitch').skid_int_pitch}`);
-    L();
-  }
-
-  if (has('audio_volume')) {
-    if (!has('audio_pitch')) { L(SEP); L('; ~ Audio ~'); L(SEP); }
-    L('[AUDIO_VOLUME]');
-    ['ENGINE_EXT:vol_engine_ext','ENGINE_INT:vol_engine_int','GEAR_EXT:vol_gear_ext','GEAR_INT:vol_gear_int',
-     'BODYWORK:vol_bodywork','WIND:vol_wind','DIRT:vol_dirt','DOWN_SHIFT:vol_down_shift','HORN:vol_horn',
-     'GEAR_GRIND:vol_gear_grind','BACKFIRE_EXT:vol_backfire_ext','BACKFIRE_INT:vol_backfire_int',
-     'TRANSMISSION:vol_transmission','LIMITER:vol_limiter','TURBO:vol_turbo',
-     'SKID_EXT:vol_skid_ext','SKID_INT:vol_skid_int'].forEach(p => {
-      const [k, id] = p.split(':');
-      L(`${k} = ${v('audio_volume')[id]}`);
-    });
-    L();
-  }
-
-  if (has('ext_glass')) {
-    L(SEP); L('; Exterior Glass'); L(SEP);
-    L('[SHADER_REPLACEMENT_...]');
-    L(`MATERIALS = ${v('ext_glass').ext_glass_mat}`);
-    L('PROP_... = extColoredReflection, 0.9');
-    L('PROP_... = extColoredReflectionNorm, 0.8');
-    L('PROP_... = extColoredBaseReflection, 0');
-    L('PROP_... = fresnelEXP, 5');
-    L('PROP_... = fresnelMaxLevel, 1');
-    L('PROP_... = fresnelC, 0.6');
-    L('PROP_... = ksAmbient, 0.1');
-    L('PROP_... = ksDiffuse, 0.1');
-    L('PROP_... = isAdditive, 0');
-    L('PROP_... = ksSpecular, 1');
-    L('PROP_... = ksSpecularEXP, 200');
-    L('PROP_... = sunSpecular, 0.5');
-    L('PROP_... = sunSpecularEXP, 20');
-    L('PROP_... = extExtraSharpLocalReflections, -1');
-    L('PROP_... = extNormalizeAO, 1');
-    L('RESOURCE_0 = txDiffuse');
-    L('RESOURCE_FILE_0 = /../../parts/textures/glass.dds');
-    L('RESOURCE_1 = txNormal');
-    L('RESOURCE_FILE_1 = /../../parts/textures/Damage/DAMAGE_GLASS.dds');
-    L();
-  }
-
-  if (has('int_glass')) {
-    L(SEP); L('; Interior Glass'); L(SEP);
-    L('[SHADER_REPLACEMENT_100]');
-    L(`MATERIALS = ${v('int_glass').int_glass_mat}`);
-    L('SHADER = ksWindscreen');
-    L();
-  }
-
-  if (has('shaking_exhaust')) {
-    L(SEP); L('; SHAKING EXHAUST'); L(SEP);
-    const all = [v('shaking_exhaust'), ...repeats.shaking_exhaust];
-    all.forEach(ex => {
-      L('[SHAKING_EXHAUST_...]');
-      L(`MESHES = ${ex.exhaust_mesh || ''}`);
-      L(`POINT_0 = ${ex.exhaust_point || '1, 2, 3'}`);
-      L(`POINT_0_RADIUS = ${ex.exhaust_radius || '1'}`);
-      L(`POINT_0_EXP = ${ex.exhaust_exp || '1'}`);
-      L(`POINT_0_SCALE = ${ex.exhaust_scale || '0.35, 0.35, 0.3'}`);
+  // Build dynamic sections using per-feature builders
+  const dynamicFeatures = ['audio_pitch','audio_volume','ext_glass','int_glass','shaking_exhaust',
+    'underside_dark','smoke_collider','carpaint_mat','damage_tex','deforming_hood','gold_rims',
+    'silver_rims','painted_tex','ext_chrome','smoke_color','metallic_reflect','semitrans_shadows',
+    'doubleface_shadows','underglow_lights','emissive_extra'];
+  dynamicFeatures.forEach(fid => {
+    if (has(fid)) {
+      const sectionLines = buildSectionLines(fid);
+      sectionLines.forEach(sl => L(sl));
       L();
-    });
-  }
-
-  if (has('underside_dark')) {
-    L(SEP); L('; Wheel Well / Under Carriage Shadows'); L(SEP);
-    L('[SHADER_REPLACEMENT_...]');
-    L(`MATERIALS = ${v('underside_dark').underside_mats}`);
-    L('PROP_... = ksAmbient, 0.01');
-    L('PROP_... = ksDiffuse, 0.01');
-    L('DOUBLE_FACE_SHADOW_BIASED = 1');
-    L();
-  }
-
-  if (has('smoke_collider')) {
-    L(SEP); L('; Smoke Collider'); L(SEP);
-    L('[COLLIDER_0]');
-    L(`MESHES= ${v('smoke_collider').collider_mesh}`);
-    L('POSITION_OFFSET=0,0,0');
-    L('RADIUS=0.1');
-    L();
-  }
-
-  if (has('carpaint_mat')) {
-    L(SEP); L('; Carpaint'); L(SEP);
-    L('[INCLUDE: common/materials_carpaint.ini]');
-    L(`CarPaintMaterial = ${v('carpaint_mat').carpaint_material}`);
-    L('CarPaintVersionAware = 4');
-    L('DisableDev = 1');
-    L('COLLIDER_1_SPARKS_AS=TITANIUM, SKIDPAD');
-    L();
-  }
-
-  if (has('damage_tex')) {
-    const dir = v('damage_tex').damage_ao_dir || 'V';
-    L(SEP); L('; Car Damage Textures'); L(SEP);
-    L('[SHADER_REPLACEMENT_...]');
-    L(`MATERIALS = ${v('damage_tex').damage_materials}`);
-    L('SHADER = ksPerPixelMultiMap_damage_dirt');
-    'ksAmbient,0.45|ksDiffuse,0.5|ksSpecular,0.6|ksSpecularEXP,120|KsAlphaRef,1|fresnelC,0.07|fresnelEXP,3.5|fresnelMaxLevel,0.6|nmObjectSpace,0|isAdditive,2|useDetail,1|detailUVMultiplier,40|shadowBiasMult,0|damageZones,0,0,0,0|dirt,0.00|sunSpecular,12|sunSpecularEXP,2000|extNormalizeAO,1'.split('|').forEach(p => {
-      const [k, ...vv] = p.split(',');
-      L(`PROP_... = ${k}, ${vv.join(',')}`);
-    });
-    L('RESOURCE_0 = txDiffuse'); L('RESOURCE_FILE_0 = carpaint.dds');
-    L('RESOURCE_1 = txNormal'); L('RESOURCE_FILE_1 = carpaint_nm.dds');
-    L('RESOURCE_2 = txMaps'); L('RESOURCE_FILE_2 = carpaint_maps.dds');
-    L('RESOURCE_3 = txDetail'); L('RESOURCE_FILE_3 = metal_detail.dds');
-    L('RESOURCE_4 = txDamage'); L(`RESOURCE_FILE_4 = /../../parts/textures/Damage/carpaint_Damage_${dir}.dds`);
-    L('RESOURCE_5 = txDust'); L(`RESOURCE_FILE_5 = /../../parts/textures/Damage/carpaint_Dust_${dir}.dds`);
-    L('RESOURCE_6 = txDamageMask'); L(`RESOURCE_FILE_6 = /../../parts/textures/Damage/carpaint_Damage_Maps_${dir}.dds`);
-    L();
-  }
-
-  if (has('deforming_hood')) {
-    L(SEP); L('; DEFORMING HOOD'); L(SEP);
-    L('[DEFORMING_HOOD]');
-    L(`NAME=${v('deforming_hood').hood_name || ''}`);
-    L('OFFSET_Y_MIDDLE=0.03'); L('OFFSET_Y_END=-0.06'); L('OFFSET_Z_END=0.02');
-    L('BULGING_EXTRA=0.05'); L('BULGING_EXPONENT=2.0');
-    L('NOISE_Y_AMPLITUDE=-0.4'); L('NOISE_Z_AMPLITUDE=0.4');
-    L('NOISE_Y_FREQENCY=-4.0'); L('NOISE_Z_FREQENCY=4.0');
-    L('Z_FACTOR=2.5');
-    L();
-  }
-
-  if (has('gold_rims')) {
-    L(SEP); L('; Gold Rims'); L(SEP);
-    L('[Material_Aluminium_v2]');
-    L(`Materials= ${v('gold_rims').gold_rim_mats}`);
-    L('Metalness=0.5'); L('Reflectance=0.15'); L('BrightnessAdjustment=0.35');
-    L('DetailTexture=1'); L('DetailNormalTexture = common/pbr_metal.dds');
-    L('DetailNormalPBRSecondaryColor = 0.5, 0.45, 0.1, 0.3');
-    L('DetailScale=1'); L('DetailNormalBlend=1'); L('DetailNormalPBRSmoothnessGamma=0.8');
-    L();
-  }
-
-  if (has('silver_rims')) {
-    L(SEP); L('; Silver Rims'); L(SEP);
-    L('[Material_Aluminium_v2]');
-    L(`Materials= ${v('silver_rims').silver_rim_mats}`);
-    L('Metalness=0.5'); L('Reflectance=0.15'); L('BrightnessAdjustment=0.35');
-    L('DetailTexture=1'); L('DetailNormalTexture = common/pbr_metal.dds');
-    L('DetailNormalPBRSecondaryColor = 0.5, 0.5, 0.5, 0.5');
-    L('DetailScale=1'); L('DetailNormalBlend=1'); L('DetailNormalPBRSmoothnessGamma=0.8');
-    L();
-  }
-
-  if (has('painted_tex')) {
-    L(SEP); L('; Painted Texture'); L(SEP);
-    L('[SHADER_REPLACEMENT_...]');
-    L(`MATERIALS = ${v('painted_tex').painted_tex_mats}`);
-    'ksAmbient,0.45|ksDiffuse,0.5|ksSpecular,0.6|ksSpecularEXP,60|KsAlphaRef,0|fresnelC,0.07|fresnelEXP,3.5|fresnelMaxLevel,0.5|isAdditive,2|useDetail,1|detailUVMultiplier,120|shadowBiasMult,30|damageZones,0|dirt,0|sunSpecular,90|sunSpecularEXP,6500'.split('|').forEach(p => {
-      const [k, ...vv] = p.split(',');
-      L(`PROP_... = ${k}, ${vv.join(',')}`);
-    });
-    L('DOUBLE_FACE_SHADOW_BIASED = 1');
-    L();
-  }
-
-  if (has('ext_chrome')) {
-    L(SEP); L('; Exterior Chrome'); L(SEP);
-    L('[Material_Metal_v2]');
-    L(`Materials= ${v('ext_chrome').chrome_mats}`);
-    L('BrightnessAdjustment = 0.4'); L('DetailScale = 1');
-    L('Metalness = 0.5'); L('Reflectance = 0.5'); L('LocalReflectionsSharpness = 0.1');
-    L();
-  }
-
-  if (has('smoke_color')) {
-    const presets = {
-      white: '255, 255, 255', blue: '30, 80, 200', pink: '200, 50, 120',
-      red: '200, 30, 30', yellow: '220, 180, 30', purple: '120, 30, 180',
-    };
-    const preset = v('smoke_color').smoke_preset || 'white';
-    const rgb = preset === 'custom' ? (v('smoke_color').smoke_custom_rgb || '43, 100, 130') : presets[preset];
-    L(SEP); L('; Tire Smoke Color'); L(SEP);
-    L('; Note: SMOKE_COLOR is set in [PARTICLES_FX] static section below');
-    // We'll stash it for the static PARTICLES_FX section
-    window.__smokeColor = rgb;
-    L();
-  }
-
-  if (has('metallic_reflect')) {
-    L(SEP); L('; Metallic Paint Reflection'); L(SEP);
-    L('[SHADER_REPLACEMENT_...]');
-    L(`MATERIALS = ${v('metallic_reflect').metallic_material}`);
-    L('PROP_... = extColoredReflection, 0.9');
-    L('PROP_... = extColoredReflectionNorm, 0.8');
-    L('PROP_... = extColoredBaseReflection, 0.3');
-    L();
-  }
-
-  if (has('semitrans_shadows')) {
-    L(SEP); L('; Semi-Transparent Shadows'); L(SEP);
-    L('[SHADER_REPLACEMENT_...]');
-    L(`MATERIALS = ${v('semitrans_shadows').semitrans_mats}`);
-    L('SEMITRANSPARENT_SHADOWS = TEXTURE');
-    L();
-  }
-
-  if (has('doubleface_shadows')) {
-    L(SEP); L('; Double-Face Shadows'); L(SEP);
-    L('[SHADER_REPLACEMENT_...]');
-    L(`MATERIALS = ${v('doubleface_shadows').doubleface_mats}`);
-    L('DOUBLE_FACE_SHADOW_BIASED = 1');
-    L();
-  }
-
-  if (has('underglow_lights')) {
-    const ug = v('underglow_lights');
-    const blink = ug.ug_blinking === '1';
-    const ugPresets = {
-      cyan: { from: '0, 200, 220', to: '0, 150, 200' },
-      purple: { from: '80, 0, 160', to: '160, 0, 200' },
-      red: { from: '200, 0, 0', to: '255, 30, 0' },
-      green: { from: '0, 200, 30', to: '0, 150, 80' },
-      gold: { from: '200, 160, 20', to: '220, 180, 40' },
-      white: { from: '200, 200, 220', to: '220, 220, 240' },
-    };
-    const ugPreset = ug.ug_preset || 'custom';
-    const colorFrom = ugPreset === 'custom' ? ug.ug_color_from : ugPresets[ugPreset].from;
-    const colorFrom2 = ugPreset === 'custom' ? (ug.ug_color_from2 || '') : '';
-    const colorTo = ugPreset === 'custom' ? ug.ug_color_to : ugPresets[ugPreset].to;
-
-    // Calculate strip positions from car dimensions
-    const carW = parseFloat(ug.ug_width) || 1.4;
-    const carL = parseFloat(ug.ug_length) || 3.8;
-    const carY = parseFloat(ug.ug_height) || 0.20;
-    const frontZ = (-(carL / 2)).toFixed(2);
-    const rearZ = (carL / 2).toFixed(2);
-    const y = carY.toFixed(2);
-
-    L(SEP); L('; Underglow Lights'); L(SEP);
-    L(`; Calculated from car dimensions: ${carW}m wide × ${carL}m long, height ${y}`);
-    // 4 strips all running front-to-back (direction of travel)
-    // Spread evenly across the car width
-    const spacing = carW / 3;  // divide into 3 gaps for 4 strips
-    const x1 = (-(carW / 2) + spacing * 0).toFixed(2);  // far left
-    const x2 = (-(carW / 2) + spacing * 1).toFixed(2);  // center-left
-    const x3 = (-(carW / 2) + spacing * 2).toFixed(2);  // center-right
-    const x4 = (-(carW / 2) + spacing * 3).toFixed(2);  // far right
-    const zFront = frontZ;
-    const zRear = rearZ;
-
-    const strips = [
-      {n:'1', x: x1, idx: 0},
-      {n:'2', x: x2, idx: 1},
-      {n:'3', x: x3, idx: 2},
-      {n:'4', x: x4, idx: 3},
-    ];
-    strips.forEach(s => {
-      // Alternate colors: even index = color A, odd index = color B
-      const useFrom2 = colorFrom2 && (s.idx % 2 === 1);
-      const cFrom = useFrom2 ? colorFrom2 : colorFrom;
-      L(`[LIGHT_EXTRA_${s.n}]`);
-      L(`LINE_FROM=${s.x}, ${y}, ${zFront}`);
-      L(`LINE_TO=${s.x}, ${y}, ${zRear}`);
-      L('BIND_TO_HEADLIGHTS=1');
-      L(`COLOR_FROM=${cFrom}`); L(`COLOR_TO=${colorTo}`);
-      L('DIFFUSE_CONCENTRATION=0.8');
-      L('FADE_AT=150'); L('FADE_SMOOTH=8');
-      L(`RANGE=${ug.ug_range}`); L('RANGE_GRADIENT_OFFSET=0.1');
-      L(`SPOT=${ug.ug_spot}`); L('SPOT_SHARPNESS=0.5');
-      L('SPECULAR_MULT=0'); L('DIRECTION=0,-1,0');
-      L('SELF_LIGHTNING=1'); L('EXTERIOR_ONLY=0'); L('INTERIOR_ONLY=0'); L('SIMULATE_HEATING=0');
-      if (blink) { L('BLINKING_PATTERN=(0=1|1=0|2=1|3=0|4=1|5=0|6=1|7=0)'); L('BLINKING_DURATION=8'); }
-      L();
-    });
-  }
-
-  if (has('emissive_extra')) {
-    const em = v('emissive_extra');
-    L(SEP); L('; Hidden Parts'); L(SEP);
-    L('[EMISSIVE_EXTRA_F_...]');
-    L(`NAME = ${em.emissive_name}`);
-    L(`COLOR = ${em.emissive_color}`);
-    L('OFF_COLOR = 0, 0, 0'); L('LAG = 0.'); L('SIMULATE_HEATING = 0.');
-    L(`LOCATION = ${em.emissive_location || 'FRONT'}`);
-    L('ACT_AS_HEADLIGHTS = 0'); L('TOGGLE_VISIBILITY = 1'); L('TOGGLE_VISIBILITY_INVERSE = 0');
-    L();
-  }
+      // Stash smoke color for PARTICLES_FX
+      if (fid === 'smoke_color') {
+        const presets = { white:'255, 255, 255', blue:'30, 80, 200', pink:'200, 50, 120',
+          red:'200, 30, 30', yellow:'220, 180, 30', purple:'120, 30, 180' };
+        const preset = v('smoke_color').smoke_preset || 'white';
+        window.__smokeColor = preset === 'custom' ? (v('smoke_color').smoke_custom_rgb || '43, 100, 130') : presets[preset];
+      }
+    }
+  });
 
   L('[INCLUDE: common/materials_interior.ini]');
   L('[INCLUDE: common/custom_rims.ini]');
@@ -1118,6 +1257,16 @@ function generateOutput() {
   L('[EXTRA_SWITCHES]'); L('SWITCH_E_FLAGS = HOLD_MODE'); L();
 
   // Show modal first, then output
+  // Append imported ext_config content if present
+  if (originalExtConfig) {
+    L();
+    L(SEP);
+    L('; ═══ ORIGINAL EXT_CONFIG.INI (imported) ═══');
+    L(SEP);
+    L();
+    originalExtConfig.split('\n').forEach(ol => L(ol));
+  }
+
   const output = lines.join('\n');
   document.getElementById('output-code').textContent = output;
   showGenerateModal(output);
